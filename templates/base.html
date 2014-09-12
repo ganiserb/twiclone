@@ -1,13 +1,18 @@
+{% load static %}
+{% static "jquery-2.1.1.min.js" as js_jquery %}
+{% static "bootstrap.min.js"    as js_bootstrap %}
+{% static "bootstrap.min.css"   as css_bootstrap %}
+
 <!DOCTYPE html>
 <html>
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
 
-    <script src="{{ STATIC_URL }}jquery-2.1.1.min.js"></script>
-    <script src="{{ STATIC_URL }}bootstrap.min.js"></script>
+    <script src="{{ js_jquery }}"></script>
+    <script src="{{ js_bootstrap }}"></script>
 
-    <link href="{{ STATIC_URL }}bootstrap.min.css" rel="stylesheet">
+    <link href="{{ css_bootstrap }}" rel="stylesheet">
 
     {% block extra_headers %}
     {% endblock %}
