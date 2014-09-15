@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 
 from userprofile.models import Profile
 
+
 @receiver(post_save, sender=User)
 def link_user_profile(instance, created, **kwargs):
     # Whenever a User is saved() this is executed
