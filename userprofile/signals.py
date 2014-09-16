@@ -12,4 +12,4 @@ from userprofile.models import Profile
 def link_user_profile(instance, created, **kwargs):
     # Whenever a User is saved() this is executed
     if created:
-        Profile.get_or_create(user=instance)    # TODO: Default avatar image
+        Profile.objects.get_or_create(user=instance)    # TODO: Default avatar image
