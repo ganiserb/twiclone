@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="row"> <!-- Profile summary -->
+        <div class="col-md-4">
+            <img src="{{ profile.avatar.url }}" alt="{{ profile.user.username }}" class="img-thumbnail">
+            {% if profile.user == user %}
+                <a href="{% url 'userprofile:edit' profile.user.username %}">
+                    <button type="button" class="btn btn-default center-block">Editar</button>
+                </a>
+            {% endif %}
+        </div>
+        <div class="col-md-8">
+            <h1>{{ profile.user.username }}</h1>
+            <div class="well well-sm">{{ profile.bio }}</div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-2 col-md-offset-5">
+            folowers
+        </div>
+        <div class="col-md-2 col-md-offset-2">
+            following
+        </div>
+    </div>
+{% endblock content %}
