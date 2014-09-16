@@ -14,6 +14,8 @@
 
     <link href="{{ css_bootstrap }}" rel="stylesheet">
 
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     {% block extra_headers %}
     {% endblock %}
 </head>
@@ -79,9 +81,17 @@
         </div><!-- /.container-fluid -->
     </nav>
 
+    <div class="container">
 
-{% block content %}
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                {% block content %}
+            
+                {%  endblock content %}
+            </div>
+        </div>
 
-{%  endblock content %}
+    </div> <!-- container -->
+
 </body>
 </html>

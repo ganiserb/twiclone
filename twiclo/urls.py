@@ -14,4 +14,6 @@ urlpatterns = patterns('',
     url(r'^$', 'twiclo.views.home', name='home'),
     url(r'^admin/', include(admin.site.urls)),
 
+    url(r'^u/', include('userprofile.urls', namespace='userprofile')),
+
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
