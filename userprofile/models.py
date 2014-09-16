@@ -21,10 +21,10 @@ class Profile(models.Model):
 
     user = models.OneToOneField(User)
     avatar = models.ImageField(upload_to='user_avatars', default=default_profile_picture())     # TODO: asco Default. No funciona con lambda
-    interest_tags = models.ManyToManyField(InterestTag, related_name='users', null=True)
+    interest_tags = models.ManyToManyField(InterestTag, related_name='users', blank=True)
 
-    # def __str__(self):
-    #     return self.user
+    def __str__(self):
+        return self.user.username
 
     # @property
     # def avatar_url(self):
