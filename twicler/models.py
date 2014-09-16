@@ -8,6 +8,9 @@ class Twiclo(models.Model):
     author = models.ForeignKey(User)
     created = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.text
+
 
 class UserSettings(User):   # TODO: User?
     PUBLIC = 'PU'       # Everyone can see

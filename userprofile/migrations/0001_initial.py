@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='InterestTag',
             fields=[
-                ('id', models.AutoField(serialize=False, verbose_name='ID', auto_created=True, primary_key=True)),
+                ('id', models.AutoField(auto_created=True, primary_key=True, verbose_name='ID', serialize=False)),
                 ('tag_name', models.CharField(max_length=25)),
             ],
             options={
@@ -25,9 +25,9 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Profile',
             fields=[
-                ('id', models.AutoField(serialize=False, verbose_name='ID', auto_created=True, primary_key=True)),
-                ('avatar', models.ImageField(upload_to='user_avatars')),
-                ('interest_tags', models.ManyToManyField(related_name='users', to='userprofile.InterestTag')),
+                ('id', models.AutoField(auto_created=True, primary_key=True, verbose_name='ID', serialize=False)),
+                ('avatar', models.ImageField(default='default.jpg', upload_to='user_avatars')),
+                ('interest_tags', models.ManyToManyField(to='userprofile.InterestTag', related_name='users', null=True)),
                 ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
             ],
             options={
