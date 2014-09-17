@@ -1,12 +1,23 @@
 {% extends 'base.html' %}
 
+{% load static %}
+{% static 'edit_profile_control.js' as js_edit_form %}
+
+
+
+{% block extra_headers %}
+
+{% endblock extra_headers %}
+
+
+
 {% block content %}
     <div class="row"> <!-- Profile summary -->
         <div class="col-md-4">
             <img src="{{ profile.avatar.url }}" alt="{{ profile.user.username }}" class="img-thumbnail">
-            {% if profile.user == user %}
-                <a href="{% url 'userprofile:edit' profile.user.username %}">
-                    <button type="button" class="btn btn-default center-block">Editar</button>
+            {% if show_edit_button %}
+                <a href="#">
+                    <button id="edit_profile_button" type="button" class="btn btn-default center-block">Editar</button>
                 </a>
             {% endif %}
         </div>
@@ -24,4 +35,28 @@
             following
         </div>
     </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Tags</h3>
+            <ul>
+            {% for tag in interest_tags %}
+                <li>{{ tag.tag_name }}</li>
+            {% endfor %}
+            </ul>
+
+            {% if show_edit_button %}
+                <form id="profile-edit-form" method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <input type="submit" value="Submit" />
+                </form>
+            {% endif %}
+
+        </div>
+    </div>
 {% endblock content %}
+
+{% block bottom_scripts %}
+    <script src="{% static 'edit_profile_control.js'%}"></script>
+{% endblock bottom_scripts %}

@@ -88,11 +88,16 @@ MEDIA_URL = '/media/'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'all_static')
+
 STATIC_URL = '/static/'
 
+
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'twiclo/global_static'),
 )
+
+# Templates
 
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'templates'),
