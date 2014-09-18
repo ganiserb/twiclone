@@ -6,5 +6,5 @@ from userprofile import views
 
 urlpatterns = patterns('',
     #url(r'^(?P<username>.+)/edit/$', views.show_profile, name='edit'),  # TODO: Esta es la manera de hacerlo?
-    url(r'^(?P<username>.+)/$', views.show_profile, name='show'),
+    url(r'^(?P<username>.+)/$', views.view_profile, name='view'),
 )
