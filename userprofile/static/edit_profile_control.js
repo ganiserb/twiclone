@@ -2,11 +2,10 @@
  * Created by gabriel on 17/09/14.
  */
 
-$("edit_profile_button").addEventListener('click', edit_profile_button_on_click);
+$( document ).ready(function() {
+    $("#edit_profile_form").hide();
 
-$("#profile-edit-form").hide();
-$("#profile-edit-form").show();
+    $("#edit_profile_button").click( function() { $("#edit_profile_form").show(); } );
+});
 
-function edit_profile_button_on_click (evt) {
-    alert("asd");
-}
+//document.getElementById("edit_profile_button").onclick = function(evt) { edit_profile_button_onclick(evt); };

@@ -1,14 +1,7 @@
 {% extends 'base.html' %}
 
 {% load static %}
-{% static 'edit_profile_control.js' as js_edit_form %}
-
-
-
-{% block extra_headers %}
-
-{% endblock extra_headers %}
-
+{#{% static "edit_profile_control.js" as js_edit_form %} TODO: Por qué no funciona? #}
 
 
 {% block content %}
@@ -46,7 +39,7 @@
             </ul>
 
             {% if show_edit_button %}
-                <form id="profile-edit-form" method="post">
+                <form id="edit_profile_form" method="post">
                     {% csrf_token %}
                     {{ form.as_p }}
                     <input type="submit" value="Submit" />
@@ -58,5 +51,5 @@
 {% endblock content %}
 
 {% block bottom_scripts %}
-    <script src="{% static 'edit_profile_control.js'%}"></script>
+    <script src="{% static "edit_profile_control.js" %}"></script> {# TODO: Esto funcionaría si no estuviese >load static< en base.html? #}
 {% endblock bottom_scripts %}
