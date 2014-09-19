@@ -36,7 +36,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'userprofile.apps.UserProfileConfig',   # Dotted path to the AppConfig class
+    'django.contrib.humanize',
+    'userprofile.apps.UserProfileConfig',   # Dotted path to the AppConfig class (Django 1.7)
     'twicler',
 )
 

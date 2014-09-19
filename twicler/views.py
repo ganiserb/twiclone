@@ -1,3 +1,38 @@
-from django.shortcuts import render
+# coding=utf-8
+from django.shortcuts import render, get_object_or_404
 
-# Create your views here.
+from django.contrib.auth.models import User
+from twicler.models import Twiclo
+from twicler.forms import NewTwicleForm
+
+
+def view_twicles(request, username):
+    """
+    Shows the last twicles of the given user
+    If this is the request.user page, allows for publication of new twicles
+    """
+    user_shown = get_object_or_404(User, username=username)
+
+    if request.method == 'POST' and request.user == user_shown:
+        form_new_twicle = NewTwicleForm(request.POST, request.FILES)
+        if form_new_twicle.is_valid():
+            twicle = form_new_twicle.save(commit=False)  # Don't save yet, pending actions
+
+            twicle.author = request.user
+
+            twicle.save()   # Done!
+
+    # Always create a new form so it's ready to be used (Enven after processing a POST)
+    form_new_twicle = NewTwicleForm()
+
+    # TODO: Tomar la cantidad a mostrar de las settings del request.user
+    last_twicles = Twiclo.objects.filter(author=user_shown).order_by('-created')[:3]
+
+
+    return render(request,
+                  'twicler/view.html',
+                  {
+                      'last_twicles': last_twicles,
+                      'form_new_twicle': form_new_twicle,
+                      'allow_editing': request.user == user_shown,
+                  })

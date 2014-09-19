@@ -15,5 +15,6 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
 
     url(r'^u/', include('userprofile.urls', namespace='userprofile')),
+    url(r'^t/', include('twicler.urls', namespace='twicler')),
 
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
