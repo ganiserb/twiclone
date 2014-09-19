@@ -10,3 +10,10 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['avatar', 'bio']
+
+
+class ProfileTagsForm(forms.ModelForm):
+
+    class Meta:
+        model = Profile
+        fields = ['interest_tags',]

@@ -3,9 +3,6 @@
  */
 
 $( document ).ready(function() {
-//    $("#edit_profile_form").hide();
-//    $(".edit_profile_form_element").hide();
-//    console.log("Hiding");
     var editing = false;
 
     $("#edit_profile_button").click(
@@ -19,7 +16,7 @@ $( document ).ready(function() {
                 console.log("Showing form elements");
                 $(".edit_profile_form_element").show();
 
-                $("#edit_profile_button").text("Cancelar");
+                $("#edit_profile_button span").attr('class', "glyphicon glyphicon-remove"); // TODO: El editor me dice que ese $() es ineficiente
 
                 editing = true;
             }
@@ -31,13 +28,26 @@ $( document ).ready(function() {
                 console.log("Showing info elements");
                 $(".info_element").show();
 
-                $("#edit_profile_button").text("Editar");
+                $("#edit_profile_button span").attr('class', "glyphicon glyphicon-edit");
 
                 editing = false;
             }
 
-
-
         }
     );
+
+
+    $("#edit_tags_form_submit").click(
+        function() {
+            var tags_form = $("#edit_tags_form");
+            $.post( "edit_tags_ajax", tags_form.serialize()).done(
+                function (data) {
+                    console.log(data);
+                }
+            );
+        }
+    );
+
+
+
 });

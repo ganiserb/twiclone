@@ -15,7 +15,7 @@ class Profile(models.Model):
     The user profile model that extends the user model with a OneToOne link
     """
 
-    def default_profile_picture():  # TODO: Así se define una función?
+    def default_profile_picture():  # TODO: Así se define una función acá dentro del modelo?
         return "default.jpg"
 
     user = models.OneToOneField(User)
@@ -25,10 +25,3 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.username
-
-    # @property
-    # def avatar_url(self):
-    #     if :
-    #
-    #     else:
-    #
