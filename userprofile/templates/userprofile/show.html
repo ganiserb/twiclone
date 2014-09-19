@@ -47,7 +47,7 @@
                 {% endif %}
 
                 <span class="edit_profile_form_element">
-                    <button type="submit" class="btn btn-default"/>
+                    <button type="submit" name="form_info" class="btn btn-default"/>
                     <span class="glyphicon glyphicon-ok"></span>
                     </button>
                 </span>
@@ -92,11 +92,23 @@
             <h3>Tags</h3>
 
             {% if edition_allowed %}
+
+                <!-- Select tags -->
                 <form id="edit_tags_form" method="post">
                     {% csrf_token %}
                     {{ form_tags.as_table }}
 
                     <input id="edit_tags_form_submit" type="button" value="Submit" />
+                </form>
+
+                <!-- Add tag -->
+                <form id="form_new_tag" method="post">
+                    {% csrf_token %}
+                    {{ form_new_tag.as_table }}
+
+                    <button id="form_new_tag_submit" name="form_new_tag" type="submit" class="btn btn-default"/>
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </button>
                 </form>
             {% else %}
             <ul>

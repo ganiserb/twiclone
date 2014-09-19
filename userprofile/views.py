@@ -4,15 +4,20 @@ from django.core.urlresolvers import reverse
 
 from django.contrib.auth.models import User
 from userprofile.models import Profile
-from userprofile.forms import ProfileForm, ProfileTagsForm
+from userprofile.forms import ProfileForm, ProfileTagsForm, TagForm
 
 
 def view_profile(request, username):
     """
-    Only shows the profile page of the given user
+    Shows the profile page of the given user
+    If the profile belongs to the current user allows:
+        Edit basic profile info
+        Select interest tags
+        Add new interest tags
     """
     form_info = None
     form_tags = None
+    form_new_tag = None
     edition_allowed = False
 
     profile = get_object_or_404(Profile, user=get_object_or_404(User, username=username))
@@ -22,14 +27,25 @@ def view_profile(request, username):
 
         form_tags = ProfileTagsForm(instance=profile)   # Este no se va a manejar en esta view, sino por AJAX
 
+        form_new_tag = TagForm()    # La idea es sólo crear nuevos
+
         edition_allowed = True
 
     if request.method == 'POST' and profile.user == request.user:
-        form_info = ProfileForm(request.POST, request.FILES, instance=profile)   # TODO: Funcionaría la img con ajax?
-        if form_info.is_valid():
-            form_info.save()
+        if "form_info" in request.POST:
+            form_info = ProfileForm(request.POST, request.FILES, instance=profile)   # TODO: Funcionaría la img con ajax?
+            if form_info.is_valid():
+                form_info.save()
 
-            return HttpResponseRedirect(reverse('userprofile:view', kwargs={'username': username}))
+        elif "form_new_tag" in request.POST:
+            form_new_tag = TagForm(request.POST)
+            if form_new_tag.is_valid():
+                new_tag = form_new_tag.save()
+
+                profile.interest_tags.add(new_tag)  # Add the the tag as a if the user chose it
+
+        return HttpResponseRedirect(reverse('userprofile:view', kwargs={'username': username}))
+
     else:
 
         return render(request, 'userprofile/show.html', {'profile': profile,
@@ -37,6 +53,7 @@ def view_profile(request, username):
                                                          'edition_allowed': edition_allowed,
                                                          'form_info': form_info,
                                                          'form_tags': form_tags,
+                                                         'form_new_tag': form_new_tag,
                                                          }
                       )
 

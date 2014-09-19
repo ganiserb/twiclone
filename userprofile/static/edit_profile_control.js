@@ -5,6 +5,10 @@
 $( document ).ready(function() {
     var editing = false;
 
+
+    //$('#edit_tags_form_submit').tooltip( "show" );
+
+
     $("#edit_profile_button").click(
         function() {
 
@@ -39,10 +43,23 @@ $( document ).ready(function() {
 
     $("#edit_tags_form_submit").click(
         function() {
+            $('#edit_tags_form_submit').popover('toggle');
+
             var tags_form = $("#edit_tags_form");
             $.post( "edit_tags_ajax", tags_form.serialize()).done(
                 function (data) {
                     console.log(data);
+                    var edit_tags_form_submit = $('#edit_tags_form_submit');
+                    edit_tags_form_submit.tooltip( {placement: "right",
+                                          title: data,
+                                          trigger: "manual"
+                                         } );
+                    edit_tags_form_submit.tooltip( "show" );
+
+                    // Show response and destroy de tooltip (Because it's created on every click)
+                    setTimeout(function () {
+                        edit_tags_form_submit.tooltip( 'destroy' );
+                        }, 2000);
                 }
             );
         }
