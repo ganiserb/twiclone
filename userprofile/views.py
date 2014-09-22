@@ -33,7 +33,7 @@ def view_profile(request, username):
 
     if request.method == 'POST' and profile.user == request.user:
         if "form_info" in request.POST:
-            form_info = ProfileForm(request.POST, request.FILES, instance=profile)   # TODO: Funcionaría la img con ajax?
+            form_info = ProfileForm(request.POST, request.FILES, instance=profile)   # TODO: Funcionaría la img con ajax? -> En teoría sí
             if form_info.is_valid():
                 form_info.save()
 
@@ -73,4 +73,4 @@ def edit_tags_ajax(request, username):
 
             return HttpResponse("Actualización correcta: " + username)
 
-    return HttpResponse("Algo falló :/")    # TODO: Qué hacer en este caso? Levantar un error 500?
+    return HttpResponse("Algo falló :/")    # TODO: Que JS se encargue de decirle al usuario qué falló si hubo algo

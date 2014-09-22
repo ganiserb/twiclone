@@ -7,11 +7,11 @@ from twicler.models import Twiclo
 from twicler.forms import NewTwicleForm
 
 
-def view_twicles(request, username):
+def view_twicles(request, username):    # TODO: Manejar el post del twicle en otra view
     """
     Shows the last twicles of the given user
     If this is the request.user page, allows for publication of new twicles
-    """ #TODO: Cómo documentar en Django?
+    """
     user_shown = get_object_or_404(User, username=username)
 
     if request.method == 'POST' and request.user == user_shown:

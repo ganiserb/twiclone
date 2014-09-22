@@ -1,8 +1,6 @@
 {% extends 'base.html' %}
 
 {% load static %}
-{#{% static "edit_profile_control.js" as js_edit_form %} TODO: Por qué no funciona? #}
-{#{% static "edit_profile.css" as css_edit_profile %} TODO: Por qué no funciona? #}
 
 
 {% block extra_headers %}
@@ -13,7 +11,7 @@
 {% block content %}
 
     {% if edition_allowed %}
-    <form id="edit_profile_form" enctype="multipart/form-data" method="post"> {# TODO: Esto también lo oculto con el if #}
+    <form id="edit_profile_form" enctype="multipart/form-data" method="post">
         {% csrf_token %}
 
         {% for field in form_info %}    {# TODO: Ver que todos los forms muestren los errores #}
@@ -124,5 +122,5 @@
 {% endblock content %}
 
 {% block bottom_scripts %}
-    <script src="{% static "edit_profile_control.js" %}"></script> {# TODO: Esto funcionaría si no estuviese >load static< en base.html? #}
+    <script src="{% static "edit_profile_control.js" %}"></script>
 {% endblock bottom_scripts %}

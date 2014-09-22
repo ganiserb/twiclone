@@ -11,13 +11,13 @@ urlpatterns = patterns('',
     # url(r'^$', 'twiclo.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
-    url(r'^$', 'twiclo.views.home', name='home'),
+    url(r'^$', 'twiclo.views.home', name='home'),   # TODO: Que si estoy logueado muestre mis twicles y los de quienes sigo
     url(r'^admin/', include(admin.site.urls)),
 
     url(r'^u/', include('userprofile.urls', namespace='userprofile')),
     url(r'^t/', include('twicler.urls', namespace='twicler')),
 
-    url(r'^accounts/login/$', 'django.contrib.auth.views.login'),
+    url(r'^accounts/login/$', 'django.contrib.auth.views.login'), # TODO: Hacer login
 
 
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 
 
 class Twiclo(models.Model):
+    # TODO: Describir qué es cada modelo
     text = models.CharField(max_length=200)
     author = models.ForeignKey(User)
     created = models.DateTimeField(auto_now_add=True)
@@ -13,7 +14,7 @@ class Twiclo(models.Model):
         return self.text
 
 
-class UserSettings(models.Model):   # TODO: User?
+class UserSettings(models.Model):
     PUBLIC = 'PU'       # Everyone can see
     FOLLOWING = 'FI'    # Only those i'm following can see
 
