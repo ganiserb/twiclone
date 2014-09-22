@@ -17,4 +17,7 @@ urlpatterns = patterns('',
     url(r'^u/', include('userprofile.urls', namespace='userprofile')),
     url(r'^t/', include('twicler.urls', namespace='twicler')),
 
+    url(r'^accounts/login/$', 'django.contrib.auth.views.login'),
+
+
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

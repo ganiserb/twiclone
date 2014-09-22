@@ -16,7 +16,7 @@
     <form id="edit_profile_form" enctype="multipart/form-data" method="post"> {# TODO: Esto también lo oculto con el if #}
         {% csrf_token %}
 
-        {% for field in form_info %}
+        {% for field in form_info %}    {# TODO: Ver que todos los forms muestren los errores #}
         <div class="fieldWrapper edit_profile_form_element">
             {{ field.errors }}
         </div>
@@ -98,7 +98,7 @@
                     {% csrf_token %}
                     {{ form_tags.as_table }}
 
-                    <input id="edit_tags_form_submit" type="button" value="Submit" />
+                    <input id="edit_tags_form_submit" type="button" value="Actualizar tags" />
                 </form>
 
                 <!-- Add tag -->

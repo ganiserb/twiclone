@@ -1,5 +1,6 @@
 # coding=utf-8
 from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
 
 from django.contrib.auth.models import User
 from twicler.models import Twiclo
@@ -10,7 +11,7 @@ def view_twicles(request, username):
     """
     Shows the last twicles of the given user
     If this is the request.user page, allows for publication of new twicles
-    """
+    """ #TODO: Cómo documentar en Django?
     user_shown = get_object_or_404(User, username=username)
 
     if request.method == 'POST' and request.user == user_shown:
@@ -28,11 +29,16 @@ def view_twicles(request, username):
     # TODO: Tomar la cantidad a mostrar de las settings del request.user
     last_twicles = Twiclo.objects.filter(author=user_shown).order_by('-created')[:3]
 
-
     return render(request,
                   'twicler/view.html',
                   {
                       'last_twicles': last_twicles,
                       'form_new_twicle': form_new_twicle,
+                      'user_shown': user_shown,
                       'allow_editing': request.user == user_shown,
                   })
+
+
+@login_required()
+def follow(request, username):
+    raise NotImplementedError

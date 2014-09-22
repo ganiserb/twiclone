@@ -9,7 +9,7 @@
     <div class="row">
         <div class="col-md-12">
 
-                <form enctype="multipart/form-data" method="post">
+            <form enctype="multipart/form-data" method="post">
                 {% csrf_token %}
                 {{ form_new_twicle.as_table }}
                 <button type="submit" name="form_info" class="btn btn-default"/>
@@ -18,9 +18,15 @@
             </form>
         </div>
     </div>
+    {% else %}
+        <div class="row">
+            <div class="col-md-12">
+                <a href="{% url 'twicler:follow' user_shown %}">Seguir</a>
+            </div>
+        </div>
     {% endif %}
 
-    {#  Ticles  #}
+    {#  Twicles  #}
 
     <div class="row">
 
@@ -28,7 +34,7 @@
         <div class="col-md-12">
             {% for twicle in last_twicles %}
                 <div class="row">
-                        
+
                         {% if twicle.image %}
                             <div class="col-md-8">
                                 {{ twicle.text }} | {{ twicle.created | naturaltime }}
