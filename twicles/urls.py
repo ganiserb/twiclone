@@ -2,7 +2,7 @@
 __author__ = 'gabriel'
 
 from django.conf.urls import patterns, url
-from twicler import views
+from twicles import views
 
 urlpatterns = patterns('',
     url(r'^(?P<username>.+)/follow/$', views.follow, name='follow'),

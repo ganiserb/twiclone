@@ -15,7 +15,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
 
     url(r'^u/', include('userprofile.urls', namespace='userprofile')),
-    url(r'^t/', include('twicler.urls', namespace='twicler')),
+    url(r'^t/', include('twicles.urls', namespace='twicles')),
 
     url(r'^accounts/login/$', 'django.contrib.auth.views.login'), # TODO: Hacer login
 

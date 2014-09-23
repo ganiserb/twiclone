@@ -38,7 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'userprofile.apps.UserProfileConfig',   # Dotted path to the AppConfig class (Django 1.7)
-    'twicler',
+    'twicles',
 )
 
 MIDDLEWARE_CLASSES = (

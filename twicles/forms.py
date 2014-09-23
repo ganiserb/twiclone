@@ -2,7 +2,7 @@
 __author__ = 'gabriel'
 
 from django import forms
-from twicler.models import Twiclo
+from twicles.models import Twicle
 
 
 class NewTwicleForm(forms.ModelForm):
@@ -10,5 +10,5 @@ class NewTwicleForm(forms.ModelForm):
     image = forms.ImageField(required=False)
 
     class Meta:
-        model = Twiclo
+        model = Twicle
         fields = ['text', 'image']

@@ -3,8 +3,8 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
 from django.contrib.auth.models import User
-from twicler.models import Twiclo
-from twicler.forms import NewTwicleForm
+from twicles.models import Twicle
+from twicles.forms import NewTwicleForm
 
 
 def view_twicles(request, username):    # TODO: Manejar el post del twicle en otra view
@@ -27,10 +27,10 @@ def view_twicles(request, username):    # TODO: Manejar el post del twicle en ot
     form_new_twicle = NewTwicleForm()
 
     # TODO: Tomar la cantidad a mostrar de las settings del request.user
-    last_twicles = Twiclo.objects.filter(author=user_shown).order_by('-created')[:3]
+    last_twicles = Twicle.objects.filter(author=user_shown).order_by('-created')[:3]
 
     return render(request,
-                  'twicler/view.html',
+                  'twicles/view.html',
                   {
                       'last_twicles': last_twicles,
                       'form_new_twicle': form_new_twicle,
