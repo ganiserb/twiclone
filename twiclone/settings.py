@@ -51,9 +51,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'twiclo.urls'
+ROOT_URLCONF = 'twiclone.urls'
 
-WSGI_APPLICATION = 'twiclo.wsgi.application'
+WSGI_APPLICATION = 'twiclone.wsgi.application'
 
 
 # Database
@@ -95,7 +95,7 @@ STATIC_URL = '/static/'
 
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'twiclo/global_static'),
+    os.path.join(BASE_DIR, 'twiclone/global_static'),
 )
 
 # Templates

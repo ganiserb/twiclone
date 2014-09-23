@@ -8,10 +8,10 @@ from django.contrib import admin
 
 urlpatterns = patterns('',
     # Examples:
-    # url(r'^$', 'twiclo.views.home', name='home'),
+    # url(r'^$', 'twiclone.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
-    url(r'^$', 'twiclo.views.home', name='home'),   # TODO: Que si estoy logueado muestre mis twicles y los de quienes sigo
+    url(r'^$', 'twiclone.views.home', name='home'),   # TODO: Que si estoy logueado muestre mis twicles y los de quienes sigo
     url(r'^admin/', include(admin.site.urls)),
 
     url(r'^u/', include('userprofile.urls', namespace='userprofile')),
