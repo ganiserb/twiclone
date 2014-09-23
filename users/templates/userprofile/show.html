@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+
+{% block extra_headers %}
+    <link href="{% static "edit_profile.css" %}" rel="stylesheet">
+{% endblock extra_headers %}
+
+
+{% block content %}
+
+    {% if edition_allowed %}
+    <form id="edit_profile_form" enctype="multipart/form-data" method="post">
+        {% csrf_token %}
+
+        {% for field in form_info %}    {# TODO: Ver que todos los forms muestren los errores #}
+        <div class="fieldWrapper edit_profile_form_element">
+            {{ field.errors }}
+        </div>
+        {% endfor %}
+    {% endif %}
+
+        <div class="row"> <!-- Profile summary -->
+            <div class="col-md-4">
+
+                <!-- Avatar -->
+
+                <span class="info_element">
+                    <img src="{{ profile.avatar.url }}" alt="{{ profile.user.username }}" class="img-thumbnail">
+                </span>
+
+                {% if edition_allowed %}
+                <span class="edit_profile_form_element">
+                    {{ form_info.avatar }}
+                </span>
+                {% endif %}
+
+                <!-- Edit controls -->
+
+                {% if edition_allowed %}
+                <button id="edit_profile_button" type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-edit"></span>
+                </button>
+                {% endif %}
+
+                <span class="edit_profile_form_element">
+                    <button type="submit" name="form_info" class="btn btn-default"/>
+                    <span class="glyphicon glyphicon-ok"></span>
+                    </button>
+                </span>
+
+            </div>
+
+            <!-- User name and Bio -->
+
+            <div class="col-md-8">
+                <h1>{{ profile.user.username }}</h1>
+                <div class="well well-sm">
+
+                    <span class="info_element">{{ profile.bio }}</span>
+
+                    {% if edition_allowed %}
+                    <span class="edit_profile_form_element">{{ form_info.bio }}</span>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+
+    {% if edition_allowed %}
+    </form>
+    {% endif %}
+
+    <!-- Follow info -->
+
+    <div class="row">
+        <div class="col-md-2 col-md-offset-5">
+            folowers
+        </div>
+        <div class="col-md-2 col-md-offset-2">
+            following
+        </div>
+    </div>
+
+    <!-- Interest tags -->
+
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Tags</h3>
+
+            {% if edition_allowed %}
+
+                <!-- Select tags -->
+                <form id="edit_tags_form" method="post">
+                    {% csrf_token %}
+                    {{ form_tags.as_table }}
+
+                    <input id="edit_tags_form_submit" type="button" value="Actualizar tags" />
+                </form>
+
+                <!-- Add tag -->
+                <form id="form_new_tag" method="post">
+                    {% csrf_token %}
+                    {{ form_new_tag.as_table }}
+
+                    <button id="form_new_tag_submit" name="form_new_tag" type="submit" class="btn btn-default"/>
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </button>
+                </form>
+            {% else %}
+            <ul>
+                {% for tag in interest_tags %}
+                <li>{{ tag.tag_name }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block bottom_scripts %}
+    <script src="{% static "edit_profile_control.js" %}"></script>
+{% endblock bottom_scripts %}

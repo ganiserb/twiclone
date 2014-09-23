@@ -39,6 +39,11 @@ def view_twicles(request, username):    # TODO: Manejar el post del twicle en ot
                   })
 
 
+def post_twicle(request):
+    """
+
+    """
+
 @login_required()
 def follow(request, username):
     raise NotImplementedError

@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'userprofile.apps.UserProfileConfig',   # Dotted path to the AppConfig class (Django 1.7)
     'twicles',
+    'users',
 )
 
 MIDDLEWARE_CLASSES = (
