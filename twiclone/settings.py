@@ -37,9 +37,10 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'userprofile.apps.UserProfileConfig',   # Dotted path to the AppConfig class (Django 1.7)
-    'twicles',
+    'django_js_reverse',
     'users',
+    'twicles',
+
 )
 
 MIDDLEWARE_CLASSES = (
@@ -104,3 +105,7 @@ STATICFILES_DIRS = (
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'templates'),
 )
+
+# AUTH
+
+AUTH_USER_MODEL = 'users.User'

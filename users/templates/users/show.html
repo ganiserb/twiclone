@@ -5,13 +5,16 @@
 
 {% block extra_headers %}
     <link href="{% static "edit_profile.css" %}" rel="stylesheet">
+{#    <script type="text/javascript"> {# QUESTION: Hay alguna mejor manera para pasarle el usaurio a django_js_reverse el usuario que está en la URL actual? #}
+{#        user_shown = "{{ user.username }}";#}
+{#    </script>#}
 {% endblock extra_headers %}
 
 
 {% block content %}
 
     {% if edition_allowed %}
-    <form id="edit_profile_form" enctype="multipart/form-data" method="post">
+    <form id="edit_profile_form" enctype="multipart/form-data" method="post" {# action="{% url 'users:post_profile_info' profile.username %}" #}>
         {% csrf_token %}
 
         {% for field in form_info %}    {# TODO: Ver que todos los forms muestren los errores #}
@@ -27,7 +30,7 @@
                 <!-- Avatar -->
 
                 <span class="info_element">
-                    <img src="{{ profile.avatar.url }}" alt="{{ profile.user.username }}" class="img-thumbnail">
+                    <img src="{{ profile.avatar.url }}" alt="{{ profile.username }}" class="img-thumbnail">
                 </span>
 
                 {% if edition_allowed %}
@@ -55,7 +58,7 @@
             <!-- User name and Bio -->
 
             <div class="col-md-8">
-                <h1>{{ profile.user.username }}</h1>
+                <h1>{{ profile.username }}</h1>
                 <div class="well well-sm">
 
                     <span class="info_element">{{ profile.bio }}</span>
