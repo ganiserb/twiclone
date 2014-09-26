@@ -45,6 +45,16 @@
                 <button id="edit_profile_button" type="button" class="btn btn-default">
                     <span class="glyphicon glyphicon-edit"></span>
                 </button>
+                {% else %}
+                    {# This user is not me, therefore I can [un]follow it #}
+
+                    <a href="{% url 'users:follow' profile.username %}">
+                        {% if display_unfollow %}
+                            Dejar de seguir
+                        {% else %}
+                            Seguir
+                        {% endif %}
+                    </a>
                 {% endif %}
 
                 <span class="edit_profile_form_element">
@@ -79,10 +89,10 @@
 
     <div class="row">
         <div class="col-md-2 col-md-offset-5">
-            folowers
+            folowers: {{ followers_count }}
         </div>
         <div class="col-md-2 col-md-offset-2">
-            following
+            following: {{ following_count }}
         </div>
     </div>
 

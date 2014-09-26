@@ -18,5 +18,6 @@ class User(AbstractUser):
     bio = models.CharField(max_length=200)
 
     interest_tags = models.ManyToManyField(InterestTag, related_name='users_interested', blank=True)
-
-    following = models.ManyToManyField("self", symmetrical=False, related_name="followed_by", blank=True)  # QUESTION: symetrical = False? En True implica que si yo sigo a alguien él me sigue a mí (?)
+    # QUESTION: Cómo hago para que un usuario no se pueda seguir a sí mismo a nivel de modelo? Cosa que reviente si trato
+    # Override save() tal vez?
+    following = models.ManyToManyField("self", symmetrical=False, related_name="followed_by", blank=True)

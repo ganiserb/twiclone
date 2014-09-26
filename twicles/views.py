@@ -1,5 +1,5 @@
 # coding=utf-8
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, HttpResponse
 from django.contrib.auth.decorators import login_required
 
 from django.contrib.auth import get_user_model
@@ -45,7 +45,4 @@ def post_twicle(request):
     """
 
     """
-
-@login_required()
-def follow(request, username):
     raise NotImplementedError

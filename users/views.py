@@ -1,5 +1,6 @@
 # coding=utf-8
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, HttpResponse
+from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.contrib.auth import get_user_model
 User = get_user_model()
@@ -45,13 +46,20 @@ def show_profile(request, username):
 
     else:
 
-        return render(request, 'users/show.html', {'profile': user_profile,
-                                                   'interest_tags': user_profile.interest_tags.all(),
-                                                   'edition_allowed': request.user == user_profile,
-                                                   'form_info': form_info,
-                                                   'form_tags': form_tags,
-                                                   'form_new_tag': form_new_tag,
-                                                   }
+        return render(request,
+                      'users/show.html',
+                      {'profile': user_profile,
+                       'interest_tags': user_profile.interest_tags.all(),
+                       'edition_allowed': request.user == user_profile,
+                       'form_info': form_info,
+                       'form_tags': form_tags,
+                       'form_new_tag': form_new_tag,
+                       'following_count': user_profile.following.count(),
+                       'followers_count': user_profile.followed_by.count(),
+                       # QUESTION: Qué tal es la sig consulta? La recomienda la docu: https://docs.djangoproject.com/en/1.7/ref/models/querysets/#exists
+                       # Me refiero al id=u_p.id... Está bien usar id? Parece "burda" la manera de hacerlo
+                       'display_unfollow': request.user.following.filter(id=user_profile.id).exists(),
+                       }
         )
 
 
@@ -63,13 +71,14 @@ def post_profile_info(request, username):   # QUESTION: Conviene tener el userna
         if form.is_valid():
             form.save()
         else:
-            return render(request, 'users/show.html', {'profile': user_profile,
-                                                             'interest_tags': user_profile.interest_tags.all(),
-                                                             'edition_allowed': request.user == user_profile,
-                                                             'form_info': form,
-                                                             }
-            )
-
+            return render(request,
+                          'users/show.html',
+                          {'profile': user_profile,
+                           'interest_tags': user_profile.interest_tags.all(),
+                           'edition_allowed': request.user == user_profile,
+                           'form_info': form,
+                           }
+                          )
 
     return HttpResponseRedirect(reverse('users:view', kwargs={'username': username}))
 
@@ -90,3 +99,20 @@ def edit_tags_ajax(request, username):
             return HttpResponse("Actualización correcta: " + username)
 
     return HttpResponse("Algo falló :/")    # TODO: Que JS se encargue de decirle al usuario qué falló si hubo algo
+
+
+@login_required
+def follow_control(request, username):
+    """
+    Adds or removes the requested user to the <following> list of the currently logged in user
+    """
+    requested_user = get_object_or_404(User, username=username)
+    exists = request.user.following.filter(id=requested_user.id).exists()
+
+    # QUESTION: Hacer follow / unfollow en la misma vista era más fácil. Cómo lo hubieras hecho?
+    if exists:
+        request.user.following.remove(requested_user)
+    else:
+        request.user.following.add(requested_user)
+
+    return HttpResponseRedirect(reverse('users:show_profile', kwargs={'username': username}))

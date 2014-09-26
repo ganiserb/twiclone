@@ -52,9 +52,9 @@
                 <ul class="nav navbar-nav navbar-right">
                     <li class="active2">
 
-                        {% if user.is_anonymous %}
+                        {% if not user.is_authenticated %}
                             <li><a href="">Registrarse</a></li>
-                            <li><a href="">Login</a></li>
+                            <li><a href="{% url "login" %}">Login</a></li>
                         {% else %}
                             <p class="navbar-text navbar-right">
                                 <li class="dropdown">
@@ -66,7 +66,7 @@
                                             <li class="divider"></li>
                                         {% endif %}
 
-                                        <li><a href="">Perfil</a></li>
+                                        <li><a href="{% url 'users:show_profile' user.username %}">Perfil</a></li>
                                         <li class="divider"></li>
                                         <li><a href="">Logout</a></li>
                                     </ul>
