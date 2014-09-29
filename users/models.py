@@ -21,6 +21,3 @@ class User(AbstractUser):
     following = models.ManyToManyField("self", symmetrical=False, related_name="followed_by", blank=True)
 
     # TODO: Pisar save para que el usuario se siga a sí mismo
-
-# QUESTION: username regex acá está bien?
-username_regex = r'[\w.@+-]+'
