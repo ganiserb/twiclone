@@ -43,7 +43,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'django_js_reverse',
     'users',
-    'twicles',
+    'twicles.apps.TwiclesConfig',
 
 )
 

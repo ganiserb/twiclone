@@ -5,7 +5,8 @@ from twiclone.settings import AUTH_USER_MODEL   # QUESTION: Extender este modelo
 
 class UserSettings(models.Model):
     """
-    Extends the user model for the project adding user specific settings about the content
+    User specific settings about the content
+    All of them must contain a default value (Except user! xD )
     """
     PUBLIC = 'PU'       # Everyone can see
     FOLLOWING = 'FI'    # Only those i'm following can see
@@ -20,7 +21,10 @@ class UserSettings(models.Model):
                                   choices=VISIBILITY_CHOICES,
                                   default=PUBLIC)
 
-    twicles_per_page = models.PositiveSmallIntegerField(default=10)
+    twicles_per_page = models.PositiveSmallIntegerField(default=50)
+
+    def __str__(self):
+        return self.user.username
 
 
 class Twicle(models.Model):

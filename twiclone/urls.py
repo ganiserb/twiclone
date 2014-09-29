@@ -12,7 +12,7 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
     url(r'^jsreverse/$', 'django_js_reverse.views.urls_js', name='js_reverse'),
 
-    url(r'^$', 'twiclone.views.home', name='home'),   # TODO: Que si estoy logueado muestre mis twicles y los de quienes sigo
+    url(r'^$', 'twicles.views.home', name='home'),   # TODO: Que si estoy logueado muestre mis twicles y los de quienes sigo
     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
 
     url(r'^admin/', include(admin.site.urls)),

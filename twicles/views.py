@@ -1,12 +1,14 @@
 # coding=utf-8
-from django.shortcuts import render, get_object_or_404, HttpResponse
+from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
+from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
-
 from django.contrib.auth import get_user_model
-User = get_user_model()
 
-from twicles.models import Twicle
+User = get_user_model()
+from twicles.models import Twicle, UserSettings
 from twicles.forms import NewTwicleForm
+
+from twicles.api import retrieve_subscribed_twicles
 
 
 def view_twicles(request, username):    # TODO: Manejar el post del twicle en otra view
@@ -46,3 +48,13 @@ def post_twicle(request):
 
     """
     raise NotImplementedError
+
+
+def home(request):
+    if request.user.is_authenticated():
+        amount = UserSettings.objects.get(user=request.user).twicles_per_page
+        twicles = retrieve_subscribed_twicles(request.user, amount)
+
+        return render('home.html', {})
+    else:
+        return HttpResponseRedirect(reverse(''))
