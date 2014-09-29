@@ -5,7 +5,23 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
-from users.forms import ProfileForm, ProfileTagsForm, TagForm
+from users.forms import ProfileForm, ProfileTagsForm, TagForm, UserCreationForm
+
+
+def register(request):
+    if request.method == 'POST':
+        registration_form = UserCreationForm(request.POST)
+        if registration_form.is_valid():
+            registration_form.save()
+            return HttpResponseRedirect(reverse('login'))
+    else:
+        registration_form = UserCreationForm()
+
+    return render(request, 'users/register.html',    # QUESTION: Cómo acomodo estos de forma aceptable? (Indentación)
+        {
+            'registration_form': registration_form,
+        }
+    )
 
 
 def show_profile(request, username):

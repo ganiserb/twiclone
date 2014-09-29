@@ -21,7 +21,13 @@
     {% else %}
         <div class="row">
             <div class="col-md-12">
-                <a href="{% url 'twicles:follow' user_shown %}">Seguir</a>
+                <a href="{% url 'users:follow' user_shown %}">
+                    {% if display_unfollow %}
+                        Dejar de seguir
+                    {% else %}
+                        Seguir
+                    {% endif %}
+                </a>
             </div>
         </div>
     {% endif %}

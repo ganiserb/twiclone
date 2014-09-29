@@ -40,6 +40,7 @@ def view_twicles(request, username):    # TODO: Manejar el post del twicle en ot
                       'form_new_twicle': form_new_twicle,
                       'user_shown': user_shown,
                       'allow_editing': request.user == user_shown,
+                      'display_unfollow': request.user.following.filter(id=user_shown.id).exists(),
                   })
 
 
@@ -59,4 +60,4 @@ def home(request):
             'twicles': twicles,
         })
     else:
-        return HttpResponseRedirect(reverse(''))
+        return HttpResponseRedirect(reverse('register'))

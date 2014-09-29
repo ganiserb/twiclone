@@ -53,8 +53,8 @@
                     <li class="active2">
 
                         {% if not user.is_authenticated %}
-                            <li><a href="">Registrarse</a></li>
-                            <li><a href="{% url "login" %}">Login</a></li>
+                            <li><a href="{% url 'register' %}">Registrarse</a></li>
+                            <li><a href="{% url 'login' %}">Login</a></li>
                         {% else %}
                             <p class="navbar-text navbar-right">
                                 <li class="dropdown">

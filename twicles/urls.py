@@ -6,5 +6,4 @@ from twicles import views
 
 urlpatterns = patterns('',
     url(r'^(?P<username>.+)/$', views.view_twicles, name='view'),
-
 )

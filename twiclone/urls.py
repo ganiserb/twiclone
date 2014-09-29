@@ -14,6 +14,8 @@ urlpatterns = patterns('',
 
     url(r'^$', 'twicles.views.home', name='home'),   # TODO: Que si estoy logueado muestre mis twicles y los de quienes sigo
     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
+    url(r'^register/$', 'users.views.register', name='register'),
+
 
     url(r'^admin/', include(admin.site.urls)),
 
