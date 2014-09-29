@@ -1,8 +1,6 @@
-{% extends 'base.html' %}
+{% extends 'twicles/base_twicle_list.html' %}
 
-{% load humanize %}
-
-{% block content %}
+{% block twicle_list_top %}
 
     {% if allow_editing %}
     {#  New twicle form  #}
@@ -32,33 +30,4 @@
         </div>
     {% endif %}
 
-    {#  Twicles  #}
-
-    <div class="row">
-
-        {#  Twicle list container  #}
-        <div class="col-md-12">
-            {% for twicle in last_twicles %}
-                <div class="row">
-
-                        {% if twicle.image %}
-                            <div class="col-md-8">
-                                {{ twicle.text }} | {{ twicle.created | naturaltime }}
-                            </div>
-                            <div class="col-md-4">
-                                <a href="{{ twicle.image.url }}" class="thumbnail">
-                                    <img src="{{ twicle.image.url }}" class="img-thumbnail" />
-                                </a>
-                            </div>
-                        {% else %}
-                            <div class="col-md-12">
-                                {{ twicle.text }} | {{ twicle.created | naturaltime }} {# TODO: reemplazarlo a pata porque se ve raro! #}
-                            </div>
-                        {% endif %}
-
-                </div>
-            {% endfor %}
-        </div>
-    </div>
-
-{% endblock content %}
+{% endblock twicle_list_top %}

@@ -1,60 +1,10 @@
-{% extends 'base.html' %}
+{% extends 'twicles/base_twicle_list.html' %}
 
-{% load humanize %}
 
-{% block content %}
-{#  Twicles  #}
-
+{% block twicle_list_top %}
     <div class="row">
-
-        {#  Twicle list container  #}
         <div class="col-md-12">
-            {% for twicle in twicles %}
-
-                <div class="row">   {# Twicle content #}
-
-                    <div class="col-xs-2">  {# User avatar #}
-                        <a href="{% url 'users:show_profile' twicle.author.username %}">
-                            <img src="{{ twicle.author.avatar.url }}" class="img-thumbnail" />
-                        </a>
-                    </div>
-
-                    <div class="col-md-10">  {# Twicle content #}
-
-                        <div class="row">   {# Username #}
-                            <div class="col-md-12">
-                                <a href="{% url 'twicles:view' twicle.author.username %}">
-                                    @{{ twicle.author.username }}
-                                </a>
-                            </div>
-                        </div>
-
-                        <div class="row">   {# Content #}
-                            <div class="col-md-12">
-                                {{ twicle.text }}
-                            </div>
-                        </div>
-
-                    </div>
-
-                </div>
-
-                {% if twicle.image %}
-                <div class="row">   {# Twicle image, if present #}
-                    <div class="col-md-12">
-                        <a href="{{ twicle.image.url }}" class="thumbnail">
-                            <img src="{{ twicle.image.url }}" class="img-thumbnail" />
-                        </a>
-                    </div>
-                </div>
-                {% endif %}
-
-                <div class="row">   {# Twicle meta #}
-                    <div class="col-md-12">
-                        {{ twicle.created | naturaltime }}
-                    </div>
-                </div>
-            {% endfor %}
+            <h1>Home</h1>
         </div>
     </div>
-{% endblock content %}
+{% endblock twicle_list_top %}
