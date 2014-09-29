@@ -13,16 +13,19 @@
 
 {% block content %}
 
+    {% if form_info.errors %}
+        <ol>
+        {{ form_info.errors }}
+        </ol>
+    {% endif %}
+
     {% if edition_allowed %}
     <form id="edit_profile_form" enctype="multipart/form-data" method="post" {# action="{% url 'users:post_profile_info' profile.username %}" #}>
         {% csrf_token %}
-
-        {% for field in form_info %}    {# TODO: Ver que todos los forms muestren los errores #}
-        <div class="fieldWrapper edit_profile_form_element">
-            {{ field.errors }}
-        </div>
-        {% endfor %}
     {% endif %}
+
+
+
 
         <div class="row"> <!-- Profile summary -->
             <div class="col-md-4">

@@ -58,25 +58,21 @@ def show_profile(request, username):
 
                 user_profile.interest_tags.add(new_tag)  # Add the the tag as a if the user chose it
 
-        return HttpResponseRedirect(reverse('users:show_profile', kwargs={'username': username}))
-
-    else:
-
-        return render(request,
-                      'users/show.html',
-                      {'profile': user_profile,
-                       'interest_tags': user_profile.interest_tags.all(),
-                       'edition_allowed': request.user == user_profile,
-                       'form_info': form_info,
-                       'form_tags': form_tags,
-                       'form_new_tag': form_new_tag,
-                       'following_count': user_profile.following.count(),
-                       'followers_count': user_profile.followed_by.count(),
-                       # QUESTION: Qué tal es la sig consulta? La recomienda la docu: https://docs.djangoproject.com/en/1.7/ref/models/querysets/#exists
-                       # Me refiero al id=u_p.id... Está bien usar id? Parece "burda" la manera de hacerlo
-                       'display_unfollow': request.user.following.filter(id=user_profile.id).exists(),
-                       }
-        )
+    return render(request,
+                  'users/profile.html',
+                  {'profile': user_profile,
+                   'interest_tags': user_profile.interest_tags.all(),
+                   'edition_allowed': request.user == user_profile,
+                   'form_info': form_info,
+                   'form_tags': form_tags,
+                   'form_new_tag': form_new_tag,
+                   'following_count': user_profile.following.count(),
+                   'followers_count': user_profile.followed_by.count(),
+                   # QUESTION: Qué tal es la sig consulta? La recomienda la docu: https://docs.djangoproject.com/en/1.7/ref/models/querysets/#exists
+                   # Me refiero al id=u_p.id... Está bien usar id? Parece "burda" la manera de hacerlo
+                   'display_unfollow': request.user.following.filter(id=user_profile.id).exists(),
+                   }
+    )
 
 
 def post_profile_info(request, username):   # QUESTION: Conviene tener el username en la url o en un hidden field del form?
@@ -88,7 +84,7 @@ def post_profile_info(request, username):   # QUESTION: Conviene tener el userna
             form.save()
         else:
             return render(request,
-                          'users/show.html',
+                          'users/profile.html',
                           {'profile': user_profile,
                            'interest_tags': user_profile.interest_tags.all(),
                            'edition_allowed': request.user == user_profile,
