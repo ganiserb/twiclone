@@ -17,11 +17,9 @@ def register(request):
     else:
         registration_form = UserCreationForm()
 
-    return render(request, 'users/register.html',    # QUESTION: Cómo acomodo estos de forma aceptable? (Indentación)
-        {
-            'registration_form': registration_form,
-        }
-    )
+    return render(request,
+                  'users/register.html',
+                  {'registration_form': registration_form,})
 
 
 def show_profile(request, username):
@@ -68,14 +66,10 @@ def show_profile(request, username):
                    'form_new_tag': form_new_tag,
                    'following_count': user_profile.following.count(),
                    'followers_count': user_profile.followed_by.count(),
-                   # QUESTION: Qué tal es la sig consulta? La recomienda la docu: https://docs.djangoproject.com/en/1.7/ref/models/querysets/#exists
-                   # Me refiero al id=u_p.id... Está bien usar id? Parece "burda" la manera de hacerlo
-                   'display_unfollow': request.user.following.filter(id=user_profile.id).exists(),
-                   }
-    )
+                   'display_unfollow': request.user.following.filter(id=user_profile.id).exists()})
 
 
-def post_profile_info(request, username):   # QUESTION: Conviene tener el username en la url o en un hidden field del form?
+def post_profile_info(request): # TODO: Poner el username en un hidden field del form
     user_profile = get_object_or_404(User, username=username)
 
     if request.method == 'POST' and request.user == user_profile:
@@ -121,7 +115,7 @@ def follow_control(request, username):
     requested_user = get_object_or_404(User, username=username)
     exists = request.user.following.filter(id=requested_user.id).exists()
 
-    # QUESTION: Hacer follow / unfollow en la misma vista era más fácil. Cómo lo hubieras hecho?
+    # TODO: Hacer que la vista reciba la acción explícita que el usuario quiere realizar. (Follow o unfollow)
     if exists:
         request.user.following.remove(requested_user)
     else:

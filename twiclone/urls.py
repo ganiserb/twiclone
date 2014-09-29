@@ -5,6 +5,8 @@ from django.conf.urls.static import static
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 
+# TODO: Quitar los ".+" de las regex, usar \w
+# TODO: Hacer que no haya que anteponer /u ni /t para el perfil, etc
 
 urlpatterns = patterns('',
     # Examples:
@@ -19,7 +21,7 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
 
-    url(r'^u/', include('users.urls', namespace='users')),   # QUESTION: Cómo hacer el include? "(r'^/',include ..." no funciona, include() solo tampoco
+    url(r'^u/', include('users.urls', namespace='users')),
     url(r'^t/', include('twicles.urls', namespace='twicles')),
 
 

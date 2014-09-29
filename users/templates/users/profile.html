@@ -5,9 +5,7 @@
 
 {% block extra_headers %}
     <link href="{% static "edit_profile.css" %}" rel="stylesheet">
-{#    <script type="text/javascript"> {# QUESTION: Hay alguna mejor manera para pasarle el usaurio a django_js_reverse el usuario que está en la URL actual? #}
-{#        user_shown = "{{ user.username }}";#}
-{#    </script>#}
+    {#  TODO: Para poder pasarle al script que hace el post de los tags, definir un <span id=nombreusuario> para leerlo con JS y poder usar el django-js-reverse  #}
 {% endblock extra_headers %}
 
 

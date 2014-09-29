@@ -49,7 +49,7 @@ def post_twicle(request):
 
     """
     raise NotImplementedError
-
+    #return HttpResponseRedirect(reverse())
 
 def home(request):
     if request.user.is_authenticated():

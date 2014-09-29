@@ -1,6 +1,6 @@
 # coding=utf-8
 from django.db import models
-from twiclone.settings import AUTH_USER_MODEL   # QUESTION: Extender este modelo se hace durante import time, no? https://docs.djangoproject.com/en/1.7/topics/auth/customizing/#auth-custom-user
+from twiclone.settings import AUTH_USER_MODEL
 
 
 class UserSettings(models.Model):

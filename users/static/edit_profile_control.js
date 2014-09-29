@@ -5,9 +5,6 @@
 $( document ).ready(function() {
     var editing = false;
 
-
-    //$('#edit_tags_form_submit').tooltip( "show" );
-
     var $edit_profile_button = $("#edit_profile_button");
     $edit_profile_button.click(
         function() {
