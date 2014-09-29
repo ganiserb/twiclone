@@ -4,7 +4,13 @@
 {% block twicle_list_top %}
     <div class="row">
         <div class="col-md-12">
-            <h1>Home</h1>
+            <form enctype="multipart/form-data" method="post">
+                {% csrf_token %}
+                {{ form_new_twicle.as_table }}
+                <button type="submit" name="form_info" class="btn btn-default"/>
+                    <span class="glyphicon glyphicon-ok"></span>
+                </button>
+            </form>
         </div>
     </div>
 {% endblock twicle_list_top %}

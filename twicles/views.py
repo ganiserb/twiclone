@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 from twicles.models import Twicle, UserSettings
 from twicles.forms import NewTwicleForm
+from users.forms import ProfileForm, ProfileTagsForm, TagForm
 
 from twicles.api import retrieve_subscribed_twicles
 
@@ -56,8 +57,10 @@ def home(request):
         amount = UserSettings.objects.get(user=request.user).twicles_per_page
         twicles = retrieve_subscribed_twicles(request.user, amount)
 
-        return render(request, 'home.html', {
-            'twicles': twicles,
-        })
+        return render(request,
+                      'home.html',
+                      {'twicles': twicles,
+                       'profile': request.user,
+                       'edition_allowed': })
     else:
         return HttpResponseRedirect(reverse('register'))

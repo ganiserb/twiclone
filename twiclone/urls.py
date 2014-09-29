@@ -5,7 +5,6 @@ from django.conf.urls.static import static
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 
-# TODO: Quitar los ".+" de las regex, usar \w
 # TODO: Hacer que no haya que anteponer /u ni /t para el perfil, etc
 
 urlpatterns = patterns('',

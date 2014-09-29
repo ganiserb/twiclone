@@ -2,7 +2,134 @@
 
 {% load humanize %}
 
+
+{% block extra_headers %}
+    <link href="{% static "edit_profile.css" %}" rel="stylesheet">
+    {#  TODO: Para poder pasarle al script que hace el post de los tags, definir un <span id=nombreusuario> para leerlo con JS y poder usar el django-js-reverse  #}
+{% endblock extra_headers %}
+
 {% block content %}
+
+    {#  Profile  #}
+    {% if profile_form.errors %}
+        <ol>
+        {{ profile_form.errors }}
+        </ol>
+    {% endif %}
+
+    {% if edition_allowed %}
+    <form id="edit_profile_form" enctype="multipart/form-data" method="post" {# action="{% url 'users:post_profile_info' profile.username %}" #}>
+        {% csrf_token %}
+    {% endif %}
+
+    <div class="row"> <!-- Profile summary -->
+        <div class="col-md-4">
+
+            <!-- Avatar -->
+
+            <span class="info_element">
+                <img src="{{ profile.avatar.url }}" alt="{{ profile.username }}" class="img-thumbnail">
+            </span>
+
+            {% if edition_allowed %}
+            <span class="edit_profile_form_element">
+                {{ profile_form.avatar }}
+            </span>
+            {% endif %}
+
+            <!-- Edit controls -->
+
+            {% if edition_allowed %}
+            <button id="edit_profile_button" type="button" class="btn btn-default">
+                <span class="glyphicon glyphicon-edit"></span>
+            </button>
+            {% else %}
+                {# This user is not me, therefore I can [un]follow it #}
+
+                <a href="{% url 'users:follow' profile.username %}">
+                    {% if display_unfollow %}
+                        Dejar de seguir
+                    {% else %}
+                        Seguir
+                    {% endif %}
+                </a>
+            {% endif %}
+
+            <span class="edit_profile_form_element">
+                <button type="submit" name="profile_form" class="btn btn-default"/>
+                <span class="glyphicon glyphicon-ok"></span>
+                </button>
+            </span>
+
+        </div>
+
+        <!-- User name and Bio -->
+
+        <div class="col-md-8">
+            <h1>{{ profile.username }}</h1>
+            <div class="well well-sm">
+
+                <span class="info_element">{{ profile.bio }}</span>
+
+                {% if edition_allowed %}
+                <span class="edit_profile_form_element">{{ profile_form.bio }}</span>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+
+    {% if edition_allowed %}
+    </form>
+    {% endif %}
+
+    <!-- Follow info -->
+
+    <div class="row">
+        <div class="col-md-2 col-md-offset-5">
+            folowers: {{ followers_count }}
+        </div>
+        <div class="col-md-2 col-md-offset-2">
+            following: {{ following_count }}
+        </div>
+    </div>
+
+    <!-- Interest tags -->
+
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Tags</h3>
+
+            {% if edition_allowed %}
+
+                <!-- Select tags -->
+                <form id="edit_tags_form" method="post">
+                    {% csrf_token %}
+                    {{ edit_tags_form.as_table }}
+
+                    <input id="edit_tags_form_submit" type="button" value="Actualizar tags" />
+                </form>
+
+                <!-- Add tag -->
+                <form id="new_tag_form" method="post">
+                    {% csrf_token %}
+                    {{ new_tag_form.as_table }}
+
+                    <button id="new_tag_form_submit" name="new_tag_form" type="submit" class="btn btn-default"/>
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </button>
+                </form>
+            {% else %}
+            <ul>
+                {% for tag in interest_tags %}
+                <li>{{ tag.tag_name }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+        </div>
+    </div>
+
 
     {% block twicle_list_top %}
 
@@ -67,3 +194,7 @@
         </div>
     </div>
 {% endblock content %}
+
+{% block bottom_scripts %}
+    <script src="{% static "edit_profile_control.js" %}"></script>
+{% endblock bottom_scripts %}
