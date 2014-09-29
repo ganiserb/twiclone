@@ -17,6 +17,7 @@ def retrieve_subscribed_twicles(username, amount=50):
     user = get_object_or_404(User, username=username)
     following_users = user.following
     # TODO: Agregar opciones de privacidad, que sólo obtenga los de aquellos que puede
-    twicles = Twicle.objects.filter(author__in=following_users).order_by('-created')[:amount]
+    #twicles = Twicle.objects.filter(author__in=following_users)# QUESTION: Esto revienta!!!! .order_by('-created')[:amount]
+    twicles = Twicle.objects.filter(author__username__in=following_users.values('username')).order_by('-created')[:amount]
 
     return twicles

@@ -55,6 +55,8 @@ def home(request):
         amount = UserSettings.objects.get(user=request.user).twicles_per_page
         twicles = retrieve_subscribed_twicles(request.user, amount)
 
-        return render('home.html', {})
+        return render(request, 'home.html', {
+            'twicles': twicles,
+        })
     else:
         return HttpResponseRedirect(reverse(''))
