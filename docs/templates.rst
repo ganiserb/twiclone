@@ -13,3 +13,12 @@ receives:
     new_tag_form        users.forms.TagForm         for adding interest tags to the available choices
     followers_count
     following_count
+
+
+home
+====
+
+receives:
+    base_twicle_list
+
+    new_twicle_form     twicles.forms.NewTwicleForm for posting a new Twicle

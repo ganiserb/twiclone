@@ -45,22 +45,44 @@ def view_twicles(request, username):    # TODO: Manejar el post del twicle en ot
                   })
 
 
-def post_twicle(request):
+def post_twicle(request):   # QUESTION: Cómo muestro los errores del form así? Tendría que tener una vista sólo para eso?
     """
-
+    Captures the POST method of a NewTwicleForm
     """
-    raise NotImplementedError
-    #return HttpResponseRedirect(reverse())
+    if request.method == 'POST':
+        new_twicle_form = NewTwicleForm(request.POST, request.FILES)
+        if new_twicle_form.is_valid():
+            twicle = new_twicle_form.save(commit=False)  # Don't save yet, user binding pending
+            twicle.author = request.user
+            twicle.save()
 
+        return HttpResponseRedirect(new_twicle_form.cleaned_data['next'])
+
+
+@login_required
 def home(request):
-    if request.user.is_authenticated():
-        amount = UserSettings.objects.get(user=request.user).twicles_per_page
-        twicles = retrieve_subscribed_twicles(request.user, amount)
+    amount = UserSettings.objects.get(user=request.user).twicles_per_page
+    twicles = retrieve_subscribed_twicles(request.user, amount)
 
-        return render(request,
-                      'twicles/home.html',
-                      {'twicles': twicles,
-                       'profile': request.user,
-                       'edition_allowed': })
-    else:
-        return HttpResponseRedirect(reverse('register'))
+    # Create the forms for the template
+    profile_form = ProfileForm(instance=request.user,
+                               initial={'next': reverse('home')})
+    edit_tags_form = ProfileTagsForm(instance=request.user,
+                                     initial={'next': reverse('home')})
+    new_tag_form = TagForm(initial={'next': reverse('home')})
+
+    # QUESTION: esta es la mejor manera de setear el 'next' de los forms? Tengo que usar ese metodo
+    # de request porque sino el HTTPRedirect me tira a cualquier lado
+    new_twicle_form = NewTwicleForm(initial={'next': reverse('home')})
+
+    return render(request,
+                  'twicles/home.html',
+                  {'twicles': twicles,
+                   'profile': request.user,
+                   'edition_allowed': True,  # Si ve la home es porque es su propio perfil
+                   'profile_form': profile_form,
+                   'new_tag_form': new_tag_form,
+                   'edit_tags_form': edit_tags_form,
+                   'following_count': request.user.following.count(),
+                   'followers_count': request.user.followed_by.count(),
+                   'new_twicle_form': new_twicle_form})
