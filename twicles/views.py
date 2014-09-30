@@ -58,7 +58,7 @@ def home(request):
         twicles = retrieve_subscribed_twicles(request.user, amount)
 
         return render(request,
-                      'home.html',
+                      'twicles/home.html',
                       {'twicles': twicles,
                        'profile': request.user,
                        'edition_allowed': })
