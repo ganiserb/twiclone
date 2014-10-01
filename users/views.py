@@ -30,7 +30,13 @@ def register(request):
 
 def show_profile(request, username):
     user_shown = get_object_or_404(User, username=username)
-    amount = UserSettings.objects.get(user=request.user).twicles_per_page
+    if request.user.is_authenticated():
+        amount = UserSettings.objects.get(user=request.user).twicles_per_page
+        display_unfollow = request.user.following.filter(id=user_shown.id).exists()
+    else:
+        # TODO: No usar número mágico
+        amount = 50  # QUESTION: Ver la que está en users.models
+        display_unfollow = None
 
     # QUESTION: Cómo hago estas líneas lindas y PEP8 a la vez? o_O
     twicles = Twicle.objects.filter(author=user_shown).order_by('-created')[:amount]
@@ -50,7 +56,7 @@ def show_profile(request, username):
                    'edition_allowed': False,
                    'following_count': user_shown.following.count(),
                    'followers_count': user_shown.followed_by.count(),
-                   'display_unfollow': request.user.following.filter(id=user_shown.id).exists()})
+                   'display_unfollow': display_unfollow})
 
 
 def post_profile_form(request):

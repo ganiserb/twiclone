@@ -42,22 +42,23 @@
             <span class="glyphicon glyphicon-edit"></span>
         </button>
         {% else %}
-            {# This user is not me, therefore I can [un]follow it #}
+            {# This user is not me, therefore I may [un]follow it #}
 
-            {% if display_unfollow %}
-                {% url 'users:follow' profile.username 'u' as url %}
-            {% else %}
-                {% url 'users:follow' profile.username 'f' as url %}
-            {% endif %}
-
-            <a href="{{ url }}">
+            {% if user.is_authenticated %}
                 {% if display_unfollow %}
-                    Dejar de seguir
+                    {% url 'users:follow' profile.username 'u' as url %}
                 {% else %}
-                    Seguir
+                    {% url 'users:follow' profile.username 'f' as url %}
                 {% endif %}
-            </a>
 
+                <a href="{{ url }}">
+                    {% if display_unfollow %}
+                        Dejar de seguir
+                    {% else %}
+                        Seguir
+                    {% endif %}
+                </a>
+            {% endif %}
         {% endif %}
 
         <span class="edit_profile_form_element">
