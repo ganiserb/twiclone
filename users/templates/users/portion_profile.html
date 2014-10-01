@@ -6,6 +6,7 @@
 
 
 {#  Profile  #}
+{# QUESTION: Cómo meto el form este de perfil en un html aparte? Está partido #}
 {% if profile_form.errors %}
     <ol>
         {{ profile_form.errors }}
@@ -44,9 +45,9 @@
             {# This user is not me, therefore I can [un]follow it #}
 
             {% if display_unfollow %}
-                {% url 'users:follow' 'u' as url %}
+                {% url 'users:follow' profile.username 'u' as url %}
             {% else %}
-                {% url 'users:follow' 'f' as url %}
+                {% url 'users:follow' profile.username 'f' as url %}
             {% endif %}
 
             <a href="{{ url }}">

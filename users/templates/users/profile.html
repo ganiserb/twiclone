@@ -3,38 +3,8 @@
 {% block twicle_list_top %}
 
     {% if allow_editing %}
-    {#  New twicle form  #}
-    <div class="row">
-        <div class="col-md-12">
-
-            <form enctype="multipart/form-data" method="post">
-                {% csrf_token %}
-                {{ form_new_twicle.as_table }}
-                <button type="submit" name="form_info" class="btn btn-default"/>
-                    <span class="glyphicon glyphicon-ok"></span>
-                </button>
-            </form>
-        </div>
-    </div>
-    {% else %}
-        <div class="row">
-            <div class="col-md-12">
-
-                {% if display_unfollow %}
-                    {% url 'users:follow' profile.username 'u' as url %}
-                {% else %}
-                    {% url 'users:follow' profile.username 'f' as url %}
-                {% endif %}
-
-                <a href="{{ url }}">
-                    {% if display_unfollow %}
-                        Dejar de seguir
-                    {% else %}
-                        Seguir
-                    {% endif %}
-                </a>
-            </div>
-        </div>
     {% endif %}
+    {% include 'twicles/new_twicle_form.html' %}
+
 
 {% endblock twicle_list_top %}

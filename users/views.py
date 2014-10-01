@@ -11,6 +11,7 @@ User = get_user_model()
 
 from users.forms import ProfileForm, ProfileTagsForm, TagForm, UserCreationForm
 from twicles.models import Twicle, UserSettings
+from twicles.forms import NewTwicleForm
 
 
 def register(request):
@@ -31,13 +32,21 @@ def show_profile(request, username):
     user_shown = get_object_or_404(User, username=username)
     amount = UserSettings.objects.get(user=request.user).twicles_per_page
 
+    # QUESTION: Cómo hago estas líneas lindas y PEP8 a la vez? o_O
     twicles = Twicle.objects.filter(author=user_shown).order_by('-created')[:amount]
+
+    new_twicle_form = NewTwicleForm(initial={
+        'next': reverse(
+            'users:show_profile',
+            kwargs={'username': username}),
+        'text': '@' + username + ' '})  # Start the twicle.text with @username
 
     return render(request,
                   'users/profile.html',
                   {'twicles': twicles,
                    'profile': user_shown,
                    'interest_tags': user_shown.interest_tags.all(),
+                   'new_twicle_form': new_twicle_form,
                    'edition_allowed': False,
                    'following_count': user_shown.following.count(),
                    'followers_count': user_shown.followed_by.count(),
@@ -108,4 +117,6 @@ def follow_control(request, username, action):
     if not exists and action == 'f':
         request.user.following.add(requested_user)
 
-    return HttpResponseRedirect(reverse('twicles:view', kwargs={'username': username}))
+    return HttpResponseRedirect(reverse(
+        'users:show_profile',
+        kwargs={'username': username}))

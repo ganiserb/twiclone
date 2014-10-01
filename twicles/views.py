@@ -5,29 +5,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
-from twicles.models import Twicle, UserSettings
+from twicles.models import UserSettings
 from twicles.forms import NewTwicleForm
 from users.forms import ProfileForm, ProfileTagsForm, TagForm
 
 from twicles.api import retrieve_subscribed_twicles
-
-
-def view_user_twicles(request, username):
-
-    user_shown = get_object_or_404(User, username=username)
-    amount = UserSettings.objects.get(user=request.user).twicles_per_page
-
-    twicles = Twicle.objects.filter(author=user_shown).order_by('-created')[:amount]
-
-    return render(request,
-                  'users/profile.html',
-                  {'twicles': twicles,
-                   'profile': user_shown,
-                   'interest_tags': user_shown.interest_tags.all(),
-                   'edition_allowed': False,
-                   'following_count': user_shown.following.count(),
-                   'followers_count': user_shown.followed_by.count(),
-                   'display_unfollow': request.user.following.filter(id=user_shown.id).exists()})
 
 
 def post_twicle(request):
@@ -68,7 +50,6 @@ def home(request):
     # QUESTION: esta es la mejor manera de setear el 'next' de los forms? Tengo que usar ese metodo
     # de request porque sino el HTTPRedirect me tira a cualquier lado
     new_twicle_form = NewTwicleForm(initial={'next': reverse('home')})
-    new_twicle_form.action = reverse('twicles:post_twicle')
 
     return render(request,
                   'twicles/home.html',
