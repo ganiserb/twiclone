@@ -29,4 +29,8 @@ class User(AbstractUser):
                                        related_name="followed_by",
                                        blank=True)
 
-    # TODO: Pisar save para que el usuario se siga a sí mismo
+    def save(self, *args, **kwargs):
+        # Follow myself
+        super(User, self).save(*args, **kwargs)
+        if not self.following.filter(id=self.id).exists():
+            self.following.add(self)
