@@ -19,7 +19,14 @@
     {% else %}
         <div class="row">
             <div class="col-md-12">
-                <a href="{% url 'users:follow' user_shown %}">
+
+                {% if display_unfollow %}
+                    {% url 'users:follow' profile.username 'u' as url %}
+                {% else %}
+                    {% url 'users:follow' profile.username 'f' as url %}
+                {% endif %}
+
+                <a href="{{ url }}">
                     {% if display_unfollow %}
                         Dejar de seguir
                     {% else %}

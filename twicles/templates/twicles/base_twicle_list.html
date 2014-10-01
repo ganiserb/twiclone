@@ -48,13 +48,20 @@
             {% else %}
                 {# This user is not me, therefore I can [un]follow it #}
 
-                <a href="{% url 'users:follow' profile.username %}">
+                {% if display_unfollow %}
+                    {% url 'users:follow' 'u' as url %}
+                {% else %}
+                    {% url 'users:follow' 'f' as url %}
+                {% endif %}
+
+                <a href="{{ url }}">
                     {% if display_unfollow %}
                         Dejar de seguir
                     {% else %}
                         Seguir
                     {% endif %}
                 </a>
+
             {% endif %}
 
             <span class="edit_profile_form_element">
@@ -98,28 +105,45 @@
 
     <!-- Interest tags -->
 
-    <div class="row">
-        <div class="col-md-12">
-            <h3>Tags</h3>
+    <div class="panel-group" id="accordion">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                        Interest tags
+                    </a>
+                </h4>
+            </div>
+            <div id="collapseOne" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h3>Tags</h3>
 
-            {% if edition_allowed %}
+                            {% if edition_allowed %}
 
-                <!-- Select tags -->
-                {% include 'users/edit_tags_form.html' %}
+                                <!-- Select tags -->
+                                {% include 'users/edit_tags_form.html' %}
 
-                <!-- Add tag -->
-                {% include 'twicles/new_tag_form.html' %}
+                                <!-- Add tag -->
+                                {% include 'twicles/new_tag_form.html' %}
 
-            {% else %}
-            <ul>
-                {% for tag in interest_tags %}
-                <li>{{ tag.tag_name }}</li>
-                {% endfor %}
-            </ul>
-            {% endif %}
+                            {% else %}
+                                <ul>
+                                    {% for tag in interest_tags %}
+                                        <li>{{ tag.tag_name }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
 
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
+
 
 
     {% block twicle_list_top %}
@@ -138,7 +162,7 @@
                         <div class="row">   {# Twicle content #}
 
                             <div class="col-xs-2">  {# User avatar #}
-                                <a href="{% url 'users:show_profile' twicle.author.username %}">
+                                <a href="{% url 'twicles:view' twicle.author.username %}">
                                     <img src="{{ twicle.author.avatar.url }}" class="img-thumbnail" />
                                 </a>
                             </div>
