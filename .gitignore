@@ -2,5 +2,5 @@ venv/
 .idea/
 __pycache__/
 *.sqlite3
-media/
+media/user_avatars/
 migrations/

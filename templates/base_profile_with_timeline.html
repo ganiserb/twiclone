@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% load humanize static %}
+
+{% block content %}
+
+    {% include 'users/portion_profile.html' %}
+
+
+    {% block twicle_list_top %}
+    {% endblock twicle_list_top %}
+
+
+    {% include 'twicles/portion_twicle_timeline.html' %}
+
+{% endblock content %}

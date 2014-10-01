@@ -1,11 +1,16 @@
 # coding=utf-8
-from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, HttpResponse
+from django.shortcuts import \
+    render,\
+    get_object_or_404,\
+    HttpResponseRedirect,\
+    HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
 from users.forms import ProfileForm, ProfileTagsForm, TagForm, UserCreationForm
+from twicles.models import Twicle, UserSettings
 
 
 def register(request):
@@ -21,52 +26,22 @@ def register(request):
                   'users/register.html',
                   {'registration_form': registration_form})
 
-#
-# def show_profile(request, username):
-#     """
-#     Shows the profile page of the given username
-#     If the profile belongs to the current user this view provides forms for:
-#         Editing basic profile info
-#         Selecting interest tags
-#         Adding new interest tags
-#     """
-#
-#     # TODO: REHACER TODO!
-#     form_info = None
-#     form_tags = None
-#     form_new_tag = None
-#
-#     user_profile = get_object_or_404(User, username=username)
-#
-#     if user_profile == request.user:
-#         form_info = ProfileForm(instance=user_profile)
-#         form_tags = ProfileTagsForm(instance=user_profile)   # Este no se va a manejar en esta view, sino por AJAX
-#         form_new_tag = TagForm()    # La idea es sólo crear nuevos tags
-#
-#     if request.method == 'POST' and user_profile == request.user:
-#         if "form_info" in request.POST:
-#             form_info = ProfileForm(request.POST, request.FILES, instance=user_profile)
-#             if form_info.is_valid():
-#                 form_info.save()
-#
-#         elif "form_new_tag" in request.POST:
-#             form_new_tag = TagForm(request.POST)
-#             if form_new_tag.is_valid():
-#                 new_tag = form_new_tag.save()
-#
-#                 user_profile.interest_tags.add(new_tag)  # Add the the tag as a if the user chose it
-#
-#     return render(request,
-#                   'users/profile.html',
-#                   {'profile': user_profile,
-#                    'interest_tags': user_profile.interest_tags.all(),
-#                    'edition_allowed': request.user == user_profile,
-#                    'form_info': form_info,
-#                    'form_tags': form_tags,
-#                    'form_new_tag': form_new_tag,
-#                    'following_count': user_profile.following.count(),
-#                    'followers_count': user_profile.followed_by.count(),
-#                    'display_unfollow': request.user.following.filter(id=user_profile.id).exists()})
+
+def show_profile(request, username):
+    user_shown = get_object_or_404(User, username=username)
+    amount = UserSettings.objects.get(user=request.user).twicles_per_page
+
+    twicles = Twicle.objects.filter(author=user_shown).order_by('-created')[:amount]
+
+    return render(request,
+                  'users/profile.html',
+                  {'twicles': twicles,
+                   'profile': user_shown,
+                   'interest_tags': user_shown.interest_tags.all(),
+                   'edition_allowed': False,
+                   'following_count': user_shown.following.count(),
+                   'followers_count': user_shown.followed_by.count(),
+                   'display_unfollow': request.user.following.filter(id=user_shown.id).exists()})
 
 
 def post_profile_form(request):

@@ -1,0 +1,60 @@
+{#  Twicles  #}
+
+{% load humanize %}
+
+<div class="row">
+
+    {#  Twicle list container  #}
+    <div class="col-md-12">
+        <ul class="list-group">
+        {% for twicle in twicles %}
+            <li class="list-group-item">
+                    <div class="row">   {# Twicle content #}
+
+                        <div class="col-xs-2">  {# User avatar #}
+                            <a href="{% url 'users:show_profile' twicle.author.username %}">
+                                <img src="{{ twicle.author.avatar.url }}" class="img-thumbnail" />
+                            </a>
+                        </div>
+
+                        <div class="col-md-10">  {# Twicle content #}
+
+                            <div class="row">   {# Username #}
+                                <div class="col-md-12">
+                                    <a href="{% url 'users:show_profile' twicle.author.username %}">
+                                        @{{ twicle.author.username }}
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="row">   {# Content #}
+                                <div class="col-md-12">
+                                    {{ twicle.text }}
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    {% if twicle.image %}
+                    <div class="row">   {# Twicle image, if present #}
+                        <div class="col-md-12">
+                            <a href="{{ twicle.image.url }}" class="thumbnail">
+                                <img src="{{ twicle.image.url }}" class="img-thumbnail" />
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="row">   {# Twicle meta #}
+                        <div class="col-md-12">
+                            {{ twicle.created | naturaltime }}
+                        </div>
+                    </div>
+
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+</div>

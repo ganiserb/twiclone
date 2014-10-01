@@ -12,31 +12,16 @@ from users.forms import ProfileForm, ProfileTagsForm, TagForm
 from twicles.api import retrieve_subscribed_twicles
 
 
-def view_user_twicles(request, username):    # TODO: Manejar el post del twicle en otra view
-    """
-    Shows the last twicles of the given user
-    If this is the request.user page, allows for publication of new twicles
-    """
+def view_user_twicles(request, username):
+
     user_shown = get_object_or_404(User, username=username)
+    amount = UserSettings.objects.get(user=request.user).twicles_per_page
 
-    # if request.method == 'POST' and request.user == user_shown:
-    #     form_new_twicle = NewTwicleForm(request.POST, request.FILES)
-    #     if form_new_twicle.is_valid():
-    #         twicle = form_new_twicle.save(commit=False)  # Don't save yet, pending actions
-    #
-    #         twicle.author = request.user
-    #
-    #         twicle.save()   # Done!
-
-    # Always create a new form so it's ready to be used (Enven after processing a POST)
-    # form_new_twicle = NewTwicleForm()
-
-    # TODO: Tomar la cantidad a mostrar de las settings del request.user
-    last_twicles = Twicle.objects.filter(author=user_shown).order_by('-created')[:3]
+    twicles = Twicle.objects.filter(author=user_shown).order_by('-created')[:amount]
 
     return render(request,
-                  'twicles/view_user_twicles.html',
-                  {'twicles': last_twicles,
+                  'users/profile.html',
+                  {'twicles': twicles,
                    'profile': user_shown,
                    'interest_tags': user_shown.interest_tags.all(),
                    'edition_allowed': False,
@@ -45,14 +30,17 @@ def view_user_twicles(request, username):    # TODO: Manejar el post del twicle 
                    'display_unfollow': request.user.following.filter(id=user_shown.id).exists()})
 
 
-def post_twicle(request):   # QUESTION: Cómo muestro los errores del form así? Tendría que tener una vista sólo para eso?
+def post_twicle(request):
     """
     Captures the POST method of a NewTwicleForm
     """
+    # QUESTION: Cómo muestro los errores del form así?
+    # Tendría que tener una vista sólo para eso?
     if request.method == 'POST':
         new_twicle_form = NewTwicleForm(request.POST, request.FILES)
         if new_twicle_form.is_valid():
-            twicle = new_twicle_form.save(commit=False)  # Don't save yet, user binding pending
+            # Don't save yet, user binding pending
+            twicle = new_twicle_form.save(commit=False)
             twicle.author = request.user
             twicle.save()
 
