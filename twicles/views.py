@@ -35,17 +35,25 @@ def home(request):
     twicles = retrieve_subscribed_twicles(request.user, amount)
 
     # Create the forms for the template
-    profile_form = ProfileForm(instance=request.user,
-                               initial={'next': reverse('home'),
-                                        'user_id': request.user.id})
+    if "profile_form_with_errors" in request.session:
+        profile_form = ProfileForm(request.session.get('profile_form_with_errors'))
+        del request.session['profile_form_with_errors']
+    else:
+        profile_form = ProfileForm(instance=request.user,
+                                   initial={'next': reverse('home'),
+                                            'user_id': request.user.id})
 
     edit_tags_form = ProfileTagsForm(instance=request.user,
                                      initial={'next': reverse('home'),
                                               'user_id': request.user.id})
-    #TODO: edit_tags_form.action = reverse('users:')
 
-    new_tag_form = TagForm(initial={'next': reverse('home')})
-    #TODO: new_tag_form.action = reverse('twicles:post_twicle')
+    if "new_tag_form_with_errors" in request.session:
+        # Recover from session because it comes with errors
+        new_tag_form = TagForm(request.session.get('new_tag_form_with_errors'))
+        # Remove that key, otherwise it will use the form with errors again
+        del request.session['new_tag_form_with_errors']
+    else:
+        new_tag_form = TagForm(initial={'next': reverse('home')})
 
     # QUESTION: esta es la mejor manera de setear el 'next' de los forms? Tengo que usar ese metodo
     # de request porque sino el HTTPRedirect me tira a cualquier lado

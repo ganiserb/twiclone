@@ -4,6 +4,7 @@ from django.shortcuts import \
     get_object_or_404,\
     HttpResponseRedirect,\
     HttpResponse
+from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.contrib.auth import get_user_model
@@ -15,6 +16,9 @@ from twicles.forms import NewTwicleForm
 
 
 def register(request):
+    """
+    Shows and processes the registration form
+    """
     if request.method == 'POST':
         registration_form = UserCreationForm(request.POST)
         if registration_form.is_valid():
@@ -29,13 +33,22 @@ def register(request):
 
 
 def show_profile(request, username):
+    """
+    Shows a user profile page including her twicle timeline
+    If the user is authentcated also displays a form to post a twicle,
+      starting with @username
+
+    :param request:
+    :param username: the User.username of the user whose profile wants to be
+                        viewed
+    """
     user_shown = get_object_or_404(User, username=username)
     if request.user.is_authenticated():
         amount = UserSettings.objects.get(user=request.user).twicles_per_page
         display_unfollow = request.user.following.filter(id=user_shown.id).exists()
     else:
         # TODO: No usar número mágico
-        amount = 50  # QUESTION: Ver la que está en users.models
+        amount = 50  # QUESTION: Magic number - Ver la que está en users.models
         display_unfollow = None
 
     # QUESTION: Cómo hago estas líneas lindas y PEP8 a la vez? o_O
@@ -59,6 +72,7 @@ def show_profile(request, username):
                    'display_unfollow': display_unfollow})
 
 
+@login_required
 def post_profile_form(request):
     if request.method == 'POST':
         profile_form = ProfileForm(request.POST, request.FILES)
@@ -66,27 +80,41 @@ def post_profile_form(request):
             # QUESTION: Cómo mejorar lo siguiente?
             # Extract the user from the hidden field
             user = get_object_or_404(User, id=profile_form.cleaned_data['user_id'])
-            # Recreate the form, but this time binded to the user instance
-            profile_form = ProfileForm(request.POST, request.FILES, instance=user)
 
-            profile_form.save()
+            if request.user == user:
+                # Recreate the form, but this time binded to the user instance
+                profile_form = ProfileForm(request.POST, request.FILES, instance=user)
+                profile_form.save()
 
-            return HttpResponseRedirect(profile_form.cleaned_data['next'])
+                return HttpResponseRedirect(profile_form.cleaned_data['next'])
+            else:
+                raise PermissionDenied
 
-    #!!!!!!!! TODO: no tiene otro return esto
+        else:
+            # Save the form in the session for the redirect
+            request.session['profile_form_with_errors'] = request.POST.copy()
+                # We're not saving the avatar image, though...
+
+    # QUESTION: Si no viene un POST qué?
+    return HttpResponseRedirect(request.POST['next'])
 
 
+@login_required
 def post_new_tag_form(request):
     if request.method == 'POST':
         new_tag_form = TagForm(request.POST)
-
         if new_tag_form.is_valid():
             new_tag_form.save()
 
             return HttpResponseRedirect(new_tag_form.cleaned_data['next'])
+        else:
+            request.session['new_tag_form_with_errors'] = request.POST
+
+    return HttpResponseRedirect(request.POST['next'])
 
 
-# TODO: Que sólo pueda editar si es el mismo que la request
+
+@login_required
 def post_edit_tags_form(request):
     """
     Edits the tag cloud of the given user only if it belongs to him
@@ -95,14 +123,19 @@ def post_edit_tags_form(request):
         tags_form = ProfileTagsForm(request.POST)
         if tags_form.is_valid():
             user = get_object_or_404(User, id=tags_form.cleaned_data['user_id'])
-            tags_form = ProfileTagsForm(request.POST, instance=user)
+            if request.user == user:
+                # Only allow edition if the change afects the one
+                #   who made the request
+                tags_form = ProfileTagsForm(request.POST, instance=user)
+                tags_form.save()
 
-            tags_form.save()
+                # QUESTION: Este no tiene redirect porque sólo lo uso con JS.
+                #   Qué hago? Es una cosa rara
+                return HttpResponse("Actualización correcta")
+            else:
+                raise PermissionDenied
 
-            # QUESTION: Este no tiene redirect porque sólo lo uso con JS. Qué hago?
-            return HttpResponse("Actualización correcta")
-
-    return HttpResponse("Algo falló :/")    # TODO: Que JS se encargue de decirle al usuario qué falló si hubo algo
+    return HttpResponse("Algo falló :/")
 
 
 @login_required
