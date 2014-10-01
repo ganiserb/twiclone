@@ -66,14 +66,21 @@ def home(request):
 
     # Create the forms for the template
     profile_form = ProfileForm(instance=request.user,
-                               initial={'next': reverse('home')})
+                               initial={'next': reverse('home'),
+                                        'user_id': request.user.id})
+
     edit_tags_form = ProfileTagsForm(instance=request.user,
-                                     initial={'next': reverse('home')})
+                                     initial={'next': reverse('home'),
+                                              'user_id': request.user.id})
+    #TODO: edit_tags_form.action = reverse('users:')
+
     new_tag_form = TagForm(initial={'next': reverse('home')})
+    #TODO: new_tag_form.action = reverse('twicles:post_twicle')
 
     # QUESTION: esta es la mejor manera de setear el 'next' de los forms? Tengo que usar ese metodo
     # de request porque sino el HTTPRedirect me tira a cualquier lado
     new_twicle_form = NewTwicleForm(initial={'next': reverse('home')})
+    new_twicle_form.action = reverse('twicles:post_twicle')
 
     return render(request,
                   'twicles/home.html',

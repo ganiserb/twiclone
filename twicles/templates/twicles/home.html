@@ -5,7 +5,7 @@
     <h1>TEST! - </h1>
     <div class="row">
         <div class="col-md-12">
-            <form enctype="multipart/form-data" method="post" action="{% url 'twicles:post_twicle' %}">
+            <form enctype="multipart/form-data" method="post" action="{{ new_twicle_form.action }}">  {# {% url 'twicles:post_twicle' %}"> #}
                 {% csrf_token %}
                 {{ new_twicle_form.as_table }}
                 <button type="submit" name="new_twicle_form" class="btn btn-default"/>

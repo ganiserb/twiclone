@@ -18,7 +18,9 @@
     {% endif %}
 
     {% if edition_allowed %}
-    <form id="edit_profile_form" enctype="multipart/form-data" method="post" {# action="{% url 'users:post_profile_info' profile.username %}" #}>
+    <form id="edit_profile_form" enctype="multipart/form-data" method="post" action="{% url 'users:post_profile_form' %}"> {# TODO: Separar este forn en un template y hacer {% include %} #}
+        {{ profile_form.user_id }}
+        {{ profile_form.next }}
         {% csrf_token %}
     {% endif %}
 
@@ -103,22 +105,11 @@
             {% if edition_allowed %}
 
                 <!-- Select tags -->
-                <form id="edit_tags_form" method="post">
-                    {% csrf_token %}
-                    {{ edit_tags_form.as_table }}
-
-                    <input id="edit_tags_form_submit" type="button" value="Actualizar tags" />
-                </form>
+                {% include 'users/edit_tags_form.html' %}
 
                 <!-- Add tag -->
-                <form id="new_tag_form" method="post">
-                    {% csrf_token %}
-                    {{ new_tag_form.as_table }}
+                {% include 'twicles/new_tag_form.html' %}
 
-                    <button id="new_tag_form_submit" name="new_tag_form" type="submit" class="btn btn-default"/>
-                        <span class="glyphicon glyphicon-plus"></span>
-                    </button>
-                </form>
             {% else %}
             <ul>
                 {% for tag in interest_tags %}

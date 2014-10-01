@@ -69,40 +69,48 @@ def show_profile(request, username):
                    'display_unfollow': request.user.following.filter(id=user_profile.id).exists()})
 
 
-def post_profile_info(request): # TODO: Poner el username en un hidden field del form
-    user_profile = get_object_or_404(User, username=username)
+def post_profile_form(request):
+    if request.method == 'POST':
+        profile_form = ProfileForm(request.POST, request.FILES)
+        if profile_form.is_valid():
+            # QUESTION: Cómo mejorar lo siguiente?
+            # Extract the user from the hidden field
+            user = get_object_or_404(User, id=profile_form.cleaned_data['user_id'])
+            # Recreate the form, but this time binded to the user instance
+            profile_form = ProfileForm(request.POST, request.FILES, instance=user)
 
-    if request.method == 'POST' and request.user == user_profile:
-        form = ProfileForm(request.POST, request.FILES, instance=user_profile)
-        if form.is_valid():
-            form.save()
-        else:
-            return render(request,
-                          'users/profile.html',
-                          {'profile': user_profile,
-                           'interest_tags': user_profile.interest_tags.all(),
-                           'edition_allowed': request.user == user_profile,
-                           'form_info': form,
-                           }
-                          )
+            profile_form.save()
 
-    return HttpResponseRedirect(reverse('users:view', kwargs={'username': username}))
+            return HttpResponseRedirect(profile_form.cleaned_data['next'])
+
+    #!!!!!!!! TODO: no tiene otro return esto
+
+
+def post_new_tag_form(request):
+    if request.method == 'POST':
+        new_tag_form = TagForm(request.POST)
+
+        if new_tag_form.is_valid():
+            new_tag_form.save()
+
+            return HttpResponseRedirect(new_tag_form.cleaned_data['next'])
 
 
 # TODO: Decorador para que sólo sea el propio
-def edit_tags_ajax(request, username):
+def post_edit_tags_form(request):
     """
-    Edits the tag cloud of the given user only if it belongs to him. The request comes from a JS event
+    Edits the tag cloud of the given user only if it belongs to him
     """
-    user_profile = User.objects.get(username=username)
-    #user_profile = get_object_or_404(User, username=username)
-
-    if request.method == "POST" and user_profile == request.user:
-        tags_form = ProfileTagsForm(request.POST, instance=user_profile)
+    if request.method == "POST":
+        tags_form = ProfileTagsForm(request.POST)
         if tags_form.is_valid():
+            user = get_object_or_404(User, id=tags_form.cleaned_data['user_id'])
+            tags_form = ProfileTagsForm(request.POST, instance=user)
+
             tags_form.save()
 
-            return HttpResponse("Actualización correcta: " + username)
+            # QUESTION: Este no tiene redirect porque sólo lo uso con JS. Qué hago?
+            return HttpResponse("Actualización correcta")
 
     return HttpResponse("Algo falló :/")    # TODO: Que JS se encargue de decirle al usuario qué falló si hubo algo
 

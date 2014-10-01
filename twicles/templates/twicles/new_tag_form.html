@@ -1,0 +1,8 @@
+<form id="new_tag_form" method="post" action="{% url 'users:post_new_tag_form' %}">
+    {% csrf_token %}
+    {{ new_tag_form.as_table }}
+
+    <button id="new_tag_form_submit" name="new_tag_form" type="submit" class="btn btn-default"/>
+        <span class="glyphicon glyphicon-plus"></span>
+    </button>
+</form>

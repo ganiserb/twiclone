@@ -43,7 +43,8 @@ $( document ).ready(function() {
             $('#edit_tags_form_submit').popover('toggle');
 
             var tags_form = $("#edit_tags_form");
-            $.post( "edit_tags_ajax/", tags_form.serialize()).done(
+            // QUESTION: django-js-reverse no soporta namespaces!!! https://github.com/ierror/django-js-reverse/issues/3
+            $.post( 'u/post_edit_tags_form/', tags_form.serialize()).done(
                 function (data) {
                     console.log(data);
                     var edit_tags_form_submit = $('#edit_tags_form_submit');

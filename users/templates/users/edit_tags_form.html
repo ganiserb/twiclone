@@ -1,0 +1,6 @@
+<form id="edit_tags_form" method="post" action="{% url 'users:post_edit_tags_form' %}">
+    {% csrf_token %}
+    {{ edit_tags_form.as_table }}
+
+    <input id="edit_tags_form_submit" type="button" value="Actualizar tags" />
+</form>

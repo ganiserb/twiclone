@@ -12,19 +12,21 @@ from users.models import User, InterestTag
 class ProfileForm(forms.ModelForm):
 
     next = forms.CharField(widget=forms.HiddenInput())
+    user_id = forms.IntegerField(widget=forms.HiddenInput())
 
     class Meta:
         model = User
-        fields = ['avatar', 'bio', 'next']
+        fields = ['avatar', 'bio', 'next', 'user_id']
 
 
 class ProfileTagsForm(forms.ModelForm):
 
     next = forms.CharField(widget=forms.HiddenInput())
+    user_id = forms.IntegerField(widget=forms.HiddenInput())
 
     class Meta:
         model = User
-        fields = ['interest_tags', 'next']
+        fields = ['interest_tags', 'next', 'user_id']
         widgets = {
             'interest_tags': forms.CheckboxSelectMultiple(),
         }

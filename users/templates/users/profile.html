@@ -18,7 +18,7 @@
     {% endif %}
 
     {% if edition_allowed %}
-    <form id="edit_profile_form" enctype="multipart/form-data" method="post" {# action="{% url 'users:post_profile_info' profile.username %}" #}>
+    <form id="edit_profile_form" enctype="multipart/form-data" method="post" {# action="{% url 'users:post_profile_form' profile.username %}" #}>
         {% csrf_token %}
     {% endif %}
 
