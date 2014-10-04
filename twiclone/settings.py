@@ -44,6 +44,7 @@ INSTALLED_APPS = (
     'django_js_reverse',
     'users',
     'twicles.apps.TwiclesConfig',
+    'crispy_forms',
 
 )
 
