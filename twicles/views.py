@@ -69,4 +69,5 @@ def home(request):
                    'edit_tags_form': edit_tags_form,
                    'following_count': request.user.following.count(),
                    'followers_count': request.user.followed_by.count(),
-                   'new_twicle_form': new_twicle_form})
+                   'new_twicle_form': new_twicle_form,
+                   'cosa': b"\u00a0"})   # TODO: Quitar! (Y de base.html tambien)

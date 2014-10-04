@@ -1,6 +1,6 @@
 {#  Twicles  #}
 
-{% load humanize %}
+{% load humanize rehumanize %}
 
 <div class="row">
 
@@ -49,7 +49,7 @@
 
                     <div class="row">   {# Twicle meta #}
                         <div class="col-md-12">
-                            {{ twicle.created | naturaltime }}
+                            {{ twicle.created | naturaltime | rehumanize }}
                         </div>
                     </div>
 
