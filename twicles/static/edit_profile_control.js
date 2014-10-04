@@ -22,7 +22,7 @@ $( document ).ready(function() {
                 editing = true;
             }
             else {
-                // User canceled edition    TODO: Cómo hacer que se reinicien los valores del form?
+                // User canceled edition    QUESTION: Cómo hacer que se reinicien los valores del form?
                 console.log("Hiding form elements");
                 $(".edit_profile_form_element").hide();
 

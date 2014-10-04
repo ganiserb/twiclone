@@ -1,9 +1,9 @@
 # coding=utf-8
 from django.contrib import admin
+from django.contrib.auth import get_user_model
 from users.forms import UserCreationForm, UserChangeForm
-
-from users.models import User
 from django.contrib.auth.admin import UserAdmin
+User = get_user_model()
 
 
 class UserAdminModel(UserAdmin):
@@ -24,8 +24,8 @@ class UserAdminModel(UserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('username', 'bio', 'avatar', 'password1', 'password2')}
-        ),
+            'fields': ('username', 'bio', 'avatar', 'password1', 'password2')
+        }),
     )
     search_fields = ('username',)
     ordering = ('username',)

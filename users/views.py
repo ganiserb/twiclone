@@ -115,6 +115,31 @@ def post_new_tag_form(request):
 
 
 @login_required
+def post_edit_tags_form_FOR_TESTING(request):
+    """
+    Edits the tag cloud of the given user only if it belongs to him
+    """
+    if request.method == "POST":
+        tags_form = ProfileTagsForm(request.POST)
+        if tags_form.is_valid():
+            user = get_object_or_404(User, id=tags_form.cleaned_data['user_id'])
+            if request.user == user:
+                # Only allow edition if the change afects the one
+                #   who made the request
+                tags_form = ProfileTagsForm(request.POST, instance=user)
+                tags_form.save()
+
+                return HttpResponseRedirect(tags_form.cleaned_data['next'])
+            else:
+                raise PermissionDenied
+        else:
+            request.session['edit_tags_form_with_errors'] = request.POST.copy()
+
+    return HttpResponseRedirect(request.POST['next'])
+
+
+
+@login_required
 def post_edit_tags_form(request):
     """
     Edits the tag cloud of the given user only if it belongs to him

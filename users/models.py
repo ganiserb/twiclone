@@ -5,6 +5,9 @@ from django.contrib.auth.models import AbstractUser
 # QUESTION: Cómo tener en settings la constante del avatar o la cantidad de posts a mostrar en twicle.UserSettings?
 # O sea, definir acá algo así:
 # settings.USERS_DEFAULT_AVATAR if settings.USERS_DEFAULT_AVATAR else 'default.jpg'
+# La idea es que esta app ya tenga una por defecto y se pueda sobreescribir
+#   en el settings.py
+# http://stackoverflow.com/questions/8428556/django-default-settings-convention-for-pluggable-app
 
 
 class InterestTag(models.Model):

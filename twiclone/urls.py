@@ -5,12 +5,10 @@ from django.conf.urls.static import static
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 
-# TODO: Hacer que no haya que anteponer /u ni /t para el perfil, etc
-
 urlpatterns = patterns('',
     url(r'^jsreverse/$', 'django_js_reverse.views.urls_js', name='js_reverse'),
 
-    url(r'^$', 'twicles.views.home', name='home'),   # TODO: Que si estoy logueado muestre mis twicles y los de quienes sigo
+    url(r'^$', 'twicles.views.home', name='home'),
     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
     url(r'^register/$', 'users.views.register', name='register'),
 

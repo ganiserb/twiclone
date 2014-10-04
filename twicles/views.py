@@ -12,12 +12,11 @@ from users.forms import ProfileForm, ProfileTagsForm, TagForm
 from twicles.api import retrieve_subscribed_twicles
 
 
+@login_required
 def post_twicle(request):
     """
     Captures the POST method of a NewTwicleForm
     """
-    # QUESTION: Cómo muestro los errores del form así?
-    # Tendría que tener una vista sólo para eso?
     if request.method == 'POST':
         new_twicle_form = NewTwicleForm(request.POST, request.FILES)
         if new_twicle_form.is_valid():
@@ -34,9 +33,10 @@ def home(request):
     amount = UserSettings.objects.get(user=request.user).twicles_per_page
     twicles = retrieve_subscribed_twicles(request.user, amount)
 
-    # Create the forms for the template
     if "profile_form_with_errors" in request.session:
+        # Recover from session because it comes with errors
         profile_form = ProfileForm(request.session.get('profile_form_with_errors'))
+        # Remove that key, otherwise it will use the form with errors again
         del request.session['profile_form_with_errors']
     else:
         profile_form = ProfileForm(instance=request.user,
@@ -48,15 +48,15 @@ def home(request):
                                               'user_id': request.user.id})
 
     if "new_tag_form_with_errors" in request.session:
-        # Recover from session because it comes with errors
         new_tag_form = TagForm(request.session.get('new_tag_form_with_errors'))
-        # Remove that key, otherwise it will use the form with errors again
         del request.session['new_tag_form_with_errors']
     else:
         new_tag_form = TagForm(initial={'next': reverse('home')})
 
-    # QUESTION: esta es la mejor manera de setear el 'next' de los forms? Tengo que usar ese metodo
-    # de request porque sino el HTTPRedirect me tira a cualquier lado
+    # QUESTION: esta es la mejor manera de setear el 'next' de los forms
+    # antes de mostrarlos? Acá en la view? Es el lugar más lógico porque
+    # yo se que el usuario tiene que volver acá. En un template no porque puedo
+    # usar ese form desde otra view...
     new_twicle_form = NewTwicleForm(initial={'next': reverse('home')})
 
     return render(request,

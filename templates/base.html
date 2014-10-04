@@ -1,7 +1,4 @@
 {% load static %}
-{% static "js/jquery-2.1.1.min.js" as js_jquery %}
-{% static "js/bootstrap.min.js"    as js_bootstrap %} {# TODO: Quitar #}
-{% static "css/bootstrap.min.css"   as css_bootstrap %}
 
 <!DOCTYPE html>
 <html>
@@ -9,10 +6,10 @@
     <meta charset="UTF-8">
     <title></title>
     <script src="{% url 'js_reverse' %}" type="text/javascript"></script>
-    <script src="{{ js_jquery }}"></script>
-    <script src="{{ js_bootstrap }}"></script>
+    <script src="{% static "js/jquery-2.1.1.min.js" %}"></script>
+    <script src="{% static "js/bootstrap.min.js" %}"></script>
 
-    <link href="{{ css_bootstrap }}" rel="stylesheet">
+    <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
