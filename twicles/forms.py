@@ -1,8 +1,10 @@
 # coding=utf-8
 __author__ = 'gabriel'
 
-from django.core.urlresolvers import reverse
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
 from django import forms
+from django.core.urlresolvers import reverse
 from twicles.models import Twicle
 
 
@@ -11,9 +13,25 @@ class NewTwicleForm(forms.ModelForm):
     Form for creating new Twicles
     """
 
-    image = forms.ImageField(required=False)
     next = forms.CharField(widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        super(NewTwicleForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_action = reverse('twicles:post_twicle')
+        self.helper.add_input(Submit('submit', 'Publicar'))
+
 
     class Meta:
         model = Twicle
         fields = ['text', 'image', 'next']
+        widgets = {
+            'text': forms.Textarea()
+        }
+        labels = {
+            'text': 'Texto del twicle',
+            'image': 'Incluir una imagen',
+        }
+        help_texts = {
+            'image': 'Seleccionar una imagen guardada',
+        }

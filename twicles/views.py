@@ -24,8 +24,13 @@ def post_twicle(request):
             twicle = new_twicle_form.save(commit=False)
             twicle.author = request.user
             twicle.save()
+            return HttpResponseRedirect(new_twicle_form.cleaned_data['next'])
+        else:
+            request.session['new_twicle_form_with_errors'] = request.POST
 
-        return HttpResponseRedirect(new_twicle_form.cleaned_data['next'])
+    return HttpResponseRedirect(request.POST['next'])
+
+
 
 
 @login_required
@@ -57,7 +62,12 @@ def home(request):
     # antes de mostrarlos? Acá en la view? Es el lugar más lógico porque
     # yo se que el usuario tiene que volver acá. En un template no porque puedo
     # usar ese form desde otra view...
-    new_twicle_form = NewTwicleForm(initial={'next': reverse('home')})
+    if "new_twicle_form_with_errors" in request.session:
+        new_twicle_form = NewTwicleForm(request.session.get('new_twicle_form_with_errors'))
+        del request.session['new_twicle_form_with_errors']
+    else:
+        new_twicle_form = NewTwicleForm(initial={'next': reverse('home')})
+
 
     return render(request,
                   'twicles/home.html',

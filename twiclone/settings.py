@@ -118,3 +118,7 @@ AUTH_USER_MODEL = 'users.User'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'  # Where to go after user requested login
 username_regex = r'[\w.@+-]+'
+
+# Crispyforms
+
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
