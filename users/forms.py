@@ -1,6 +1,9 @@
 # coding=utf-8
 __author__ = 'gabriel'
 
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
+from django.core.urlresolvers import reverse
 from django import forms
 from twiclone.settings import AUTH_USER_MODEL
 User = AUTH_USER_MODEL
@@ -14,6 +17,12 @@ class ProfileForm(forms.ModelForm):
     next = forms.CharField(widget=forms.HiddenInput())
     user_id = forms.IntegerField(widget=forms.HiddenInput())
 
+    # def __init__(self, *args, **kwargs):
+    #     super(ProfileForm, self).__init__(*args, **kwargs)
+    #     self.helper = FormHelper()
+    #     self.helper.form_action = reverse('twicles:post_twicle')
+    #     self.helper.add_input(Submit('submit', 'Publicar'))
+
     class Meta:
         model = User
         fields = ['avatar', 'bio', 'next', 'user_id']
@@ -23,6 +32,12 @@ class ProfileTagsForm(forms.ModelForm):
 
     next = forms.CharField(widget=forms.HiddenInput())
     user_id = forms.IntegerField(widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        super(ProfileTagsForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_action = reverse('users:post_edit_tags_form')
+        self.helper.add_input(Submit('submit', 'Actualizar tags'))
 
     class Meta:
         model = User

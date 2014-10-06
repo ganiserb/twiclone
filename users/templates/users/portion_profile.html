@@ -1,4 +1,5 @@
-{% load static %}
+{% load static crispy_forms_tags %}
+
 
 {# QUESTION: Este bloque y el del final están al cuete, no? Porque no exiendo #}
 {#       otro template... Conviene dejar así "tirados" el CSS y JS? Estarían en el <body> #}
@@ -122,7 +123,7 @@
                         {% if edition_allowed %}
 
                             <!-- Select tags -->
-                            {% include 'users/edit_tags_form.html' %}
+                            {% crispy edit_tags_form %}
 
                             <!-- Add tag -->
                             {% include 'twicles/new_tag_form.html' %}

@@ -115,7 +115,7 @@ def post_new_tag_form(request):
 
 
 @login_required
-def post_edit_tags_form_FOR_TESTING(request):
+def post_edit_tags_form(request):
     """
     Edits the tag cloud of the given user only if it belongs to him
     """
@@ -140,7 +140,7 @@ def post_edit_tags_form_FOR_TESTING(request):
 
 
 @login_required
-def post_edit_tags_form(request):
+def post_edit_tags_form_JS(request):
     """
     Edits the tag cloud of the given user only if it belongs to him
     """
