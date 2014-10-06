@@ -72,7 +72,7 @@ def show_profile(request, username):
                    'display_unfollow': display_unfollow})
 
 
-@login_required
+@login_required()
 def post_profile_form(request):
     if request.method == 'POST':
         profile_form = ProfileForm(request.POST, request.FILES)
@@ -99,7 +99,7 @@ def post_profile_form(request):
     return HttpResponseRedirect(request.POST['next'])
 
 
-@login_required
+@login_required()
 def post_new_tag_form(request):
     if request.method == 'POST':
         new_tag_form = TagForm(request.POST)
@@ -113,8 +113,7 @@ def post_new_tag_form(request):
     return HttpResponseRedirect(request.POST['next'])
 
 
-
-@login_required
+@login_required()
 def post_edit_tags_form(request):
     """
     Edits the tag cloud of the given user only if it belongs to him
@@ -138,32 +137,7 @@ def post_edit_tags_form(request):
     return HttpResponseRedirect(request.POST['next'])
 
 
-
-@login_required
-def post_edit_tags_form_JS(request):
-    """
-    Edits the tag cloud of the given user only if it belongs to him
-    """
-    if request.method == "POST":
-        tags_form = ProfileTagsForm(request.POST)
-        if tags_form.is_valid():
-            user = get_object_or_404(User, id=tags_form.cleaned_data['user_id'])
-            if request.user == user:
-                # Only allow edition if the change afects the one
-                #   who made the request
-                tags_form = ProfileTagsForm(request.POST, instance=user)
-                tags_form.save()
-
-                # QUESTION: Este no tiene redirect porque sólo lo uso con JS.
-                #   Qué hago? Es una cosa rara
-                return HttpResponse("Actualización correcta")
-            else:
-                raise PermissionDenied
-
-    return HttpResponse("Algo falló :/")
-
-
-@login_required
+@login_required()
 def follow_control(request, username, action):
     """
     Adds or removes the requested user to the <following> list of the currently logged in user
@@ -171,10 +145,10 @@ def follow_control(request, username, action):
     requested_user = get_object_or_404(User, username=username)
     exists = request.user.following.filter(id=requested_user.id).exists()
 
-    # QUESTION: Esto está funcionando con GET. Para hacerlo con POST, pero
-    #   sin andar usando un form (Es realmente necesario?) cómo hago?
-    #   O sea, sin tener un <form> hardcodeado en el template, ni una clase Form
-    #   ni con JS... Hay alguna manera de que sea sencillo como con el GET?
+    # QUESTION: Esto está funcionando con GET. Para hacerlo con POST pero
+    #   sin andar usando un form ni JS?
+    #   O sea, sin tener un <form> que no salga de un forms.py...
+    #   Hay alguna manera de que sea así de sencillo como con el GET?
     if exists and action == 'u':
         request.user.following.remove(requested_user)
 

@@ -37,32 +37,4 @@ $( document ).ready(function() {
         }
     );
 
-
-//    $("#edit_tags_form_submit").click(
-//        function() {
-//            $('#edit_tags_form_submit').popover('toggle');
-//
-//            var tags_form = $("#edit_tags_form");
-//            // QUESTION: django-js-reverse no soporta namespaces!!! https://github.com/ierror/django-js-reverse/issues/3
-//            $.post( 'u/post_edit_tags_form/', tags_form.serialize()).done(
-//                function (data) {
-//                    console.log(data);
-//                    var edit_tags_form_submit = $('#edit_tags_form_submit');
-//                    edit_tags_form_submit.tooltip( {placement: "right",
-//                                          title: data,
-//                                          trigger: "manual"
-//                                         } );
-//                    edit_tags_form_submit.tooltip( "show" );
-//
-//                    // Show response and destroy de tooltip (Because it's created on every click)
-//                    setTimeout(function () {
-//                        edit_tags_form_submit.tooltip( 'destroy' );
-//                        }, 2000);
-//                }
-//            );
-//        }
-//    );
-
-
-
 });
