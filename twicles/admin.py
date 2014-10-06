@@ -8,7 +8,7 @@ User = get_user_model()
 
 class TwicleIncludesImageFilter(admin.SimpleListFilter):
     """
-    Tilters the Twicle list depending on what the includes_image method returns
+    Filters the Twicle list depending on what the includes_image method returns
     """
     title = "Includes image?"
 
@@ -43,8 +43,11 @@ class TwicleIncludesImageFilter(admin.SimpleListFilter):
 
 @admin.register(Twicle)
 class AdminTwicle(admin.ModelAdmin):
+    def otra_columna(self, obj):
+        return bool(obj.image)
+
     date_hierarchy = 'created'
-    list_display = ('text', 'author', 'created', 'includes_image')
+    list_display = ('text', 'author', 'created', 'includes_image', 'otra_columna')
     list_filter = ('author', 'created', TwicleIncludesImageFilter)
     search_fields = ('text', 'author__username')
 

@@ -51,8 +51,8 @@ def show_profile(request, username):
         amount = 50  # QUESTION: Magic number - Ver la que está en users.models
         display_unfollow = None
 
-    # QUESTION: Cómo hago estas líneas lindas y PEP8 a la vez? o_O
-    twicles = Twicle.objects.filter(author=user_shown).order_by('-created')[:amount]
+    twicles = Twicle.objects.filter(author=user_shown)\
+                            .order_by('-created')[:amount]
 
     new_twicle_form = NewTwicleForm(initial={
         'next': reverse(
@@ -77,7 +77,6 @@ def post_profile_form(request):
     if request.method == 'POST':
         profile_form = ProfileForm(request.POST, request.FILES)
         if profile_form.is_valid():
-            # QUESTION: Cómo mejorar lo siguiente?
             # Extract the user from the hidden field
             user = get_object_or_404(User, id=profile_form.cleaned_data['user_id'])
 
@@ -95,7 +94,7 @@ def post_profile_form(request):
             request.session['profile_form_with_errors'] = request.POST.copy()
                 # We're not saving the avatar image, though...
 
-    # QUESTION: Si no viene un POST qué?
+    # QUESTION: Si no viene un POST qué? -> Que redireccione por defecto a algún lugar TODO!
     return HttpResponseRedirect(request.POST['next'])
 
 
