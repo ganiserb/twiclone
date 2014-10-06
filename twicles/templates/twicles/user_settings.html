@@ -1,0 +1,8 @@
+{% extends 'base_profile_with_timeline.html' %}
+
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+    {% crispy user_settings_form %}
+{% endblock content %}

@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 from twicles.models import UserSettings
-from twicles.forms import NewTwicleForm
+from twicles.forms import NewTwicleForm, UserSettingsForm
 from users.forms import ProfileForm, ProfileTagsForm, TagForm
 
 from twicles.api import retrieve_subscribed_twicles
@@ -31,10 +31,36 @@ def post_twicle(request):
     return HttpResponseRedirect(request.POST['next'])
 
 
+@login_required()
+def show_user_settings(request):
+    user_settings = UserSettings.objects.get(user=request.user)
+    user_settings_form = UserSettingsForm(instance=user_settings)
+
+    return render(request,
+                  'twicles/user_settings.html',
+                  {
+                      'user_settings_form': user_settings_form
+                  })
+
+
+def post_user_settings(request):
+    """
+    Captures the POST method of a UserSettingsForm
+    :param request:
+    :return:
+    """
+
+    raise NotImplementedError
 
 
 @login_required
 def home(request):
+    """
+    Shows the home page of the site including the form for editting
+    the current user profile and posting new twicles.
+    :param request:
+    :return:
+    """
     amount = UserSettings.objects.get(user=request.user).twicles_per_page
     twicles = retrieve_subscribed_twicles(request.user, amount)
 
