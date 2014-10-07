@@ -1,5 +1,6 @@
 # coding=utf-8
 from django.db import models
+from twicles import defaults
 from twiclone.settings import AUTH_USER_MODEL
 
 
@@ -21,7 +22,8 @@ class UserSettings(models.Model):
                                   choices=VISIBILITY_CHOICES,
                                   default=PUBLIC)
 
-    twicles_per_page = models.PositiveSmallIntegerField(default=50)
+    twicles_per_page = models.PositiveSmallIntegerField(
+        default=defaults.twicles_per_page)
 
     def __str__(self):
         return self.user.username
@@ -35,19 +37,6 @@ class Twicle(models.Model):
     author = models.ForeignKey(AUTH_USER_MODEL)
     created = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(upload_to="twiclo_images", blank=True)
-
-    def includes_image(self):
-        """
-        returns True if the twicle has an image or False if it's
-        not present
-        :return:    boolean
-        """
-        return bool(self.image)
-
-    # Admin stuff QUESTION: Esto no queda mejor en admin.py? Estoy mezclando cosas
-    #   del sitio de admin en el modelo así
-    includes_image.boolean = True
-    includes_image.short_description = "Includes image?"
 
     def __str__(self):
         return self.text
