@@ -42,7 +42,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'rehumanize',
-    #'django_js_reverse',
     'users',
     'twicles.apps.TwiclesConfig',
     'crispy_forms',
