@@ -17,4 +17,6 @@ urlpatterns = patterns('',
     url(r'^u/', include('users.urls', namespace='users')),
     url(r'^t/', include('twicles.urls', namespace='twicles')),
 
+    url(r'^api/', include('siteapi.urls', namespace='api')),
+
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
