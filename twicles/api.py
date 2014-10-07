@@ -24,6 +24,7 @@ def retrieve_subscribed_twicles(username, amount=defaults.twicles_per_page):
 
     # TODO: Agregar opciones de privacidad, que sólo obtenga los de aquellos que puede
     twicles = Twicle.objects.filter(author__in=following_users) \
+                            .select_related('author') \
                             .order_by('-created')[:amount]
 
     return twicles
