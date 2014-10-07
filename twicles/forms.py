@@ -16,7 +16,18 @@ class NewTwicleForm(forms.ModelForm):
     next = forms.CharField(widget=forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
+
+        # Put these kwargs as the initial data of the form
+        initial = {}
+        for field in ('next', 'text'):
+            if field in kwargs:
+                initial[field] = kwargs[field]
+                del kwargs[field]   # Remove the custom kwarg
+        kwargs['initial'] = initial
+
         super(NewTwicleForm, self).__init__(*args, **kwargs)
+
+        # Crispyforms helper
         self.helper = FormHelper()
         self.helper.form_action = reverse('twicles:post_twicle')
         self.helper.add_input(Submit('submit', 'Publicar'))

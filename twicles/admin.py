@@ -43,11 +43,20 @@ class TwicleIncludesImageFilter(admin.SimpleListFilter):
 
 @admin.register(Twicle)
 class AdminTwicle(admin.ModelAdmin):
-    def otra_columna(self, obj):
+
+    def includes_image(self, obj):
+        """
+        returns True if the twicle has an image or False if it's
+        not present
+        :return:    boolean
+        """
         return bool(obj.image)
 
+    includes_image.boolean = True
+    includes_image.short_description = "Tiene imagen?"
+
     date_hierarchy = 'created'
-    list_display = ('text', 'author', 'created', 'includes_image', 'otra_columna')
+    list_display = ('text', 'author', 'created', 'includes_image')
     list_filter = ('author', 'created', TwicleIncludesImageFilter)
     search_fields = ('text', 'author__username')
 

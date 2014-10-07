@@ -12,6 +12,7 @@ User = get_user_model()
 
 from users.forms import ProfileForm, ProfileTagsForm, TagForm, UserCreationForm
 from twicles.models import Twicle, UserSettings
+from twicles import defaults
 from twicles.forms import NewTwicleForm
 
 
@@ -47,18 +48,15 @@ def show_profile(request, username):
         amount = UserSettings.objects.get(user=request.user).twicles_per_page
         display_unfollow = request.user.following.filter(id=user_shown.id).exists()
     else:
-        # TODO: No usar número mágico
-        amount = 50  # QUESTION: Magic number - Ver la que está en users.models
+        amount = defaults.twicles_per_page
         display_unfollow = None
 
     twicles = Twicle.objects.filter(author=user_shown)\
                             .order_by('-created')[:amount]
 
-    new_twicle_form = NewTwicleForm(initial={
-        'next': reverse(
-            'users:show_profile',
-            kwargs={'username': username}),
-        'text': '@' + username + ' '})  # Start the twicle.text with @username
+    new_twicle_form = NewTwicleForm(next=reverse('users:show_profile',
+                                                 kwargs={'username': username}),
+                                    text='@' + username + ' ')  # Start the twicle.text with @username
 
     return render(request,
                   'users/profile.html',
