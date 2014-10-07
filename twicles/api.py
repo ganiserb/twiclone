@@ -4,8 +4,31 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from twicles import defaults
 
+# Django datetime enconder
+from django.core.serializers.json import DjangoJSONEncoder
+from json import dumps
+
 User = get_user_model()
 from twicles.models import Twicle
+
+
+def jsonify_twicle_queryset(twicles_queryset):
+    """
+    Takes a Twicle queryset and returns a JSON string
+    :param twicles_queryset:    A Twicle queryset
+    :return:                    A JSON string
+    """
+    twicles = []
+    for twicle in twicles_queryset:
+        twicles.append({
+            'pk': twicle.id,
+            'text': twicle.text,
+            'author_username': twicle.author.username,
+            'author_pk': twicle.author.id,
+            'image': twicle.image.url if bool(twicle.image) else '',
+            'created': dumps(twicle.created, cls=DjangoJSONEncoder)
+        })
+    return dumps(twicles)
 
 
 def retrieve_subscribed_twicles(username, amount=defaults.twicles_per_page):
