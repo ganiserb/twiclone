@@ -26,3 +26,7 @@ class ShowProfileViewTests(TestCase):
         self.assertIsInstance(rsp.context['followers_count'], int)
         self.assertIsInstance(rsp.context['following_count'], int)
         self.assertIsInstance(rsp.context['new_twicle_form'], NewTwicleForm)
+
+        # TODO: Testear más cosas, como que esté el link a seguir o
+        #  dejar de seguir según el usuario está o no autenticado
+        #  y que de 404 si el usuario que se pide ver no existe, etc...
