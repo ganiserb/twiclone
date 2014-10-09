@@ -2,6 +2,7 @@
 from django.db import models
 from twicles import defaults
 from twiclone.settings import AUTH_USER_MODEL
+from django.core import validators
 
 
 class UserSettings(models.Model):
@@ -23,7 +24,10 @@ class UserSettings(models.Model):
                                   default=PUBLIC)
 
     twicles_per_page = models.PositiveSmallIntegerField(
-        default=defaults.twicles_per_page)
+        default=defaults.twicles_per_page,
+        validators=[
+            validators.MinValueValidator(defaults.twicles_per_page_min_value)
+        ])
 
     def __str__(self):
         return self.user.username
