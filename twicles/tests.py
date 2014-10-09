@@ -5,25 +5,13 @@ from django.core.urlresolvers import reverse
 from twicles.api import retrieve_subscribed_twicles
 from twicles.models import Twicle
 from twicles import defaults, forms
+from tests import utils
 import users
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
 class ApiRetrieveSubscribedTwiclesTests(TestCase):
-
-    def create_twicles(self, user, amount):
-        """
-        Creates a number of <amount> twicles asociated to the <user>
-        :param user:    The author for thetwicles
-        :param amount:  The amount to create
-        :return:        List of twicles created
-        """
-        # QUESTION: Cómo hacer esto PEP8?
-        return [Twicle.objects.create(text='twicle' + str(n)
-                                           + str(user.username),
-                                      author=user)
-                for n in range(amount)]
 
     def test_amount_parameter_raises_value_error_if_amount_less_than_minimum(self):
         """
@@ -55,7 +43,7 @@ class ApiRetrieveSubscribedTwiclesTests(TestCase):
     def test_returns_as_many_twicles_as_amount_or_less(self):
         u1 = User.objects.create(username='u1')
         # Create 5 more twicles than the minimum to display
-        self.create_twicles(u1, defaults.twicles_per_page_min_value + 5)
+        utils.create_twicles(u1, defaults.twicles_per_page_min_value + 5)
         # Request less than all available
         amount = defaults.twicles_per_page_min_value + 1
         self.assertLessEqual(
@@ -84,13 +72,13 @@ class ApiRetrieveSubscribedTwiclesTests(TestCase):
         user1.following.add(user2)
 
         # user1 publishes some twicles
-        twicles_user1 = self.create_twicles(user1, 5)
+        twicles_user1 = utils.create_twicles(user1, 5)
 
         # user2 publishes some twicles
-        twicles_user2 = self.create_twicles(user2, 5)
+        twicles_user2 = utils.create_twicles(user2, 5)
 
         # user3 publishes some twicles
-        twicles_user3 = self.create_twicles(user3, 5)
+        twicles_user3 = utils.create_twicles(user3, 5)
 
         # check that only user1 and user2 twicles are returned
         #   in no particular order
@@ -110,35 +98,18 @@ class ApiRetrieveSubscribedTwiclesTests(TestCase):
 
 class HomeViewTests(TestCase):
 
-    def create_user(self, username):
-        """
-        Creates a new user that has matching username and password
-        :param username:
-        :return:
-        """
-        # Set the user up
-        u = User.objects.create(username=username)
-        u.set_password(username)
-        u.save()
-        return u
-
-    def get_response_with_authenticated_user(self):
-        u = self.create_user('test')
-        # Log the user in
-        self.client.login(username=u.username, password=u.username)
-        # Get the home page
-        return u, self.client.get(reverse('home'))
-
     def test_anonymous_user_gets_redirected(self):
         rsp = self.client.get(reverse('home'))
         self.assertEquals(rsp.status_code, 302)
 
     def test_authenticated_user_gets_http_200(self):
-        user, rsp = self.get_response_with_authenticated_user()
+        user, rsp = utils.get_response_with_authenticated_user(self.client,
+                                                               reverse('home'))
         self.assertEquals(rsp.status_code, 200)
 
     def test_context_elements_that_should_always_be_passed_to_template(self):
-        user, rsp = self.get_response_with_authenticated_user()
+        user, rsp = utils.get_response_with_authenticated_user(self.client,
+                                                               reverse('home'))
         # profile context variable should be
         #   the user object that made the request
         self.assertEquals(rsp.context['profile'], user)
