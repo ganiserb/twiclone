@@ -19,7 +19,7 @@ class User(AbstractUser):
     """
     avatar = models.ImageField(upload_to='user_avatars',
                                default="default.jpg")
-    bio = models.CharField(max_length=200)
+    bio = models.CharField(max_length=200, default='Aún no completé la bio')
     interest_tags = models.ManyToManyField(InterestTag,
                                            related_name='users_interested',
                                            blank=True)
