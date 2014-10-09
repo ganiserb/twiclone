@@ -9,141 +9,144 @@
 
 {% block content %}
 
-{#  Profile  #}
-{# QUESTION: Cómo meto el form este de perfil en un html aparte? Está partido #}
-{% if profile_form.errors %}
-    <ol>
-        {{ profile_form.errors }}
-    </ol>
-{% endif %}
+{% with TODO='hacer que esto controle edition_allowed' %}   {# TODO #}
 
-{% if edition_allowed %}
-<form id="edit_profile_form" enctype="multipart/form-data" method="post" action="{% url 'users:post_profile_form' %}">
-    {{ profile_form.user_id }}
-    {{ profile_form.next }}
-    {% csrf_token %}
-{% endif %}
+    {#  Profile  #}
+    {# QUESTION: Cómo meto el form este de perfil en un html aparte? Está partido #}
+    {% if profile_form.errors %}
+        <ol>
+            {{ profile_form.errors }}
+        </ol>
+    {% endif %}
 
-<div class="row"> <!-- Profile summary -->
-    <div class="col-md-4">
+    {% if edition_allowed %}
+    <form id="edit_profile_form" enctype="multipart/form-data" method="post" action="{% url 'users:post_profile_form' %}">
+        {{ profile_form.user_id }}
+        {{ profile_form.next }}
+        {% csrf_token %}
+    {% endif %}
 
-        <!-- Avatar -->
+    <div class="row"> <!-- Profile summary -->
+        <div class="col-md-4">
 
-        <span class="info_element">
-            <img src="{{ profile.avatar.url }}" alt="{{ profile.username }}" class="img-thumbnail">
-        </span>
+            <!-- Avatar -->
 
-        {% if edition_allowed %}
-        <span class="edit_profile_form_element">
-            {{ profile_form.avatar }}
-        </span>
-        {% endif %}
-
-        <!-- Edit controls -->
-
-        {% if edition_allowed %}
-        <button id="edit_profile_button" type="button" class="btn btn-default">
-            <span class="glyphicon glyphicon-edit"></span>
-        </button>
-        {% else %}
-            {# This user is not me, therefore I may [un]follow it #}
-
-            {% if user.is_authenticated %}
-                {% if display_unfollow %}
-                    {% url 'users:follow' profile.username 'u' as url %}
-                {% else %}
-                    {% url 'users:follow' profile.username 'f' as url %}
-                {% endif %}
-
-                <a href="{{ url }}">
-                    {% if display_unfollow %}
-                        Dejar de seguir
-                    {% else %}
-                        Seguir
-                    {% endif %}
-                </a>
-            {% endif %}
-        {% endif %}
-
-        <span class="edit_profile_form_element">
-            <button type="submit" name="profile_form" class="btn btn-default"/>
-            <span class="glyphicon glyphicon-ok"></span>
-            </button>
-        </span>
-
-    </div>
-
-    <!-- User name and Bio -->
-
-    <div class="col-md-8">
-        <h1>{{ profile.username }}</h1>
-        <div class="well well-sm">
-
-            <span class="info_element">{{ profile.bio }}</span>
+            <span class="info_element">
+                <img src="{{ profile.avatar.url }}" alt="{{ profile.username }}" class="img-thumbnail">
+            </span>
 
             {% if edition_allowed %}
-            <span class="edit_profile_form_element">{{ profile_form.bio }}</span>
+            <span class="edit_profile_form_element">
+                {{ profile_form.avatar }}
+            </span>
             {% endif %}
 
-        </div>
-    </div>
-</div>
+            <!-- Edit controls -->
 
-{% if edition_allowed %}
-</form>
-{% endif %}
+            {% if edition_allowed %}
+            <button id="edit_profile_button" type="button" class="btn btn-default">
+                <span class="glyphicon glyphicon-edit"></span>
+            </button>
+            {% else %}
+                {# This user is not me, therefore I may [un]follow it #}
 
-<!-- Follow info -->
+                {% if user.is_authenticated %}
+                    {% if display_unfollow %}
+                        {% url 'users:follow' profile.username 'u' as url %}
+                    {% else %}
+                        {% url 'users:follow' profile.username 'f' as url %}
+                    {% endif %}
 
-<div class="row">
-    <div class="col-md-2 col-md-offset-5">
-        folowers: {{ followers_count }}
-    </div>
-    <div class="col-md-2 col-md-offset-2">
-        following: {{ following_count }}
-    </div>
-</div>
-
-<!-- Interest tags -->
-
-<div class="panel-group" id="accordion">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-                    Interest tags
-                </a>
-            </h4>
-        </div>
-        <div id="collapseOne" class="panel-collapse collapse">
-            <div class="panel-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <h3>Tags</h3>
-
-                        {% if edition_allowed %}
-
-                            <!-- Select tags -->
-                            {% crispy edit_tags_form %}
-
-                            <!-- Add tag -->
-                            {% include 'twicles/new_tag_form.html' %}
-
+                    <a href="{{ url }}">
+                        {% if display_unfollow %}
+                            Dejar de seguir
                         {% else %}
-                            <ul>
-                                {% for tag in interest_tags %}
-                                    <li>{{ tag.tag_name }}</li>
-                                {% endfor %}
-                            </ul>
+                            Seguir
                         {% endif %}
+                    </a>
+                {% endif %}
+            {% endif %}
 
+            <span class="edit_profile_form_element">
+                <button type="submit" name="profile_form" class="btn btn-default"/>
+                <span class="glyphicon glyphicon-ok"></span>
+                </button>
+            </span>
+
+        </div>
+
+        <!-- User name and Bio -->
+
+        <div class="col-md-8">
+            <h1>{{ profile.username }}</h1>
+            <div class="well well-sm">
+
+                <span class="info_element">{{ profile.bio }}</span>
+
+                {% if edition_allowed %}
+                <span class="edit_profile_form_element">{{ profile_form.bio }}</span>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+
+    {% if edition_allowed %}
+    </form>
+    {% endif %}
+
+    <!-- Follow info -->
+
+    <div class="row">
+        <div class="col-md-2 col-md-offset-5">
+            folowers: {{ followers_count }}
+        </div>
+        <div class="col-md-2 col-md-offset-2">
+            following: {{ following_count }}
+        </div>
+    </div>
+
+    <!-- Interest tags -->
+
+    <div class="panel-group" id="accordion">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                        Interest tags
+                    </a>
+                </h4>
+            </div>
+            <div id="collapseOne" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h3>Tags</h3>
+
+                            {% if edition_allowed %}
+
+                                <!-- Select tags -->
+                                {% crispy edit_tags_form %}
+
+                                <!-- Add tag -->
+                                {% include 'twicles/new_tag_form.html' %}
+
+                            {% else %}
+                                <ul>
+                                    {% for tag in interest_tags %}
+                                        <li>{{ tag.tag_name }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
+{% endwith %}
 
     {% block twicle_list_top %}
     {% endblock twicle_list_top %}
