@@ -27,7 +27,7 @@ def get_response_with_authenticated_user(client, url):
     :param url:     the url where the client sends the GET request
     :return:        (user_loged_in, get_response_to_url)
     """
-    u = create_user('test')
+    u = create_user('UsuarioCreadoParaHacerleLogin')
     # Log the user in
     client.login(username=u.username, password=u.username)
     # Get the home page
