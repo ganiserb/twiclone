@@ -5,8 +5,8 @@ from django.conf.urls.static import static
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 
-urlpatterns = patterns('',
-
+urlpatterns = patterns(
+    '',
     url(r'^$', 'twicles.views.home', name='home'),
     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
     url(r'^register/$', 'users.views.register', name='register'),
