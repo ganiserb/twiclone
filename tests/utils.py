@@ -19,15 +19,17 @@ def create_user(username):
     return u
 
 
-def get_response_with_authenticated_user(client, url):
+def get_response_with_authenticated_user(client, url, user=None):
     """
-    Creates a test user, logs her in in the provided client,
-    then returns the user instance and the response to the given url
+    If <user> is not provided it creates a test user, logs her in
+    in the provided client and then returns the user instance
+    and the response for the given url
     :param client:  A test Client to perform the operations
     :param url:     the url where the client sends the GET request
+    :param user:    a user instance to log into the client
     :return:        (user_loged_in, get_response_to_url)
     """
-    u = create_user('UsuarioCreadoParaHacerleLogin')
+    u = create_user('UsuarioCreadoParaHacerleLogin') if user is None else user
     # Log the user in
     client.login(username=u.username, password=u.username)
     # Get the home page
