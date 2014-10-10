@@ -57,7 +57,7 @@
                         {% url 'users:follow' profile.username 'f' as url %}
                     {% endif %}
 
-                    <a href="{{ url }}">
+                    <a id="follow_control" href="{{ url }}">
                         {% if display_unfollow %}
                             Dejar de seguir
                         {% else %}
