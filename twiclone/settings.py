@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'rehumanize',
     'users',
     'twicles.apps.TwiclesConfig',
+    'siteapi',
     'crispy_forms',
 
 )
