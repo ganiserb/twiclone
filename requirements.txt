@@ -2,6 +2,7 @@ Django==1.7
 Pillow==2.5.3
 django-crispy-forms==1.4.0
 ipython==2.2.0
+mock==1.0.1
 ply==3.4
 pytz==2014.7
 slimit==0.8.1
