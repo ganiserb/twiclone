@@ -1,5 +1,6 @@
 # coding=utf-8
 from django.shortcuts import HttpResponse
+from django.http import HttpResponseForbidden
 
 from twicles import api
 
@@ -13,16 +14,23 @@ def home(request):
     :return:
     """
     # QUESTION: Esto es muy ilegible? Setear este parametro opcional así?
-    param = (request.user.username,)
-    if 'amount' in request.GET:
-        amount = int(request.GET['amount'])  # Puede reventar
-        param += (amount,)
 
-    twicles = api.jsonify_twicle_queryset(
-        api.retrieve_subscribed_twicles(*param)
-    )
+    if request.user.is_authenticated():
+        # Build a parameters tuple to call the api function later
+        param = (request.user.username,)
+        if 'amount' in request.GET:
+            # There's an "amount" of twicles in the request,
+            #   so we add it to the parameters
+            amount = int(request.GET['amount'])  # Puede reventar
+            param += (amount,)
 
-    return HttpResponse(twicles)
+        twicles = api.jsonify_twicle_queryset(
+            api.retrieve_subscribed_twicles(*param)
+        )
+
+        return HttpResponse(twicles)
+    else:
+        return HttpResponseForbidden("User not logged in")
 
 
 def profile(request, username):
