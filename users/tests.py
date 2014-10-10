@@ -11,22 +11,69 @@ User = get_user_model()
 class ShowProfileViewTests(TestCase):
 
     def test_status_code_always_200(self):
-        u = utils.create_user('usuario')
+        u = utils.create_user('test')
+
+        # anonymous request
         rsp = self.client.get(reverse('users:show_profile',
                                       kwargs={'username': u.username}))
         self.assertEquals(rsp.status_code, 200)
 
+        # authenticated request
+        request_user, rsp = utils.get_response_with_authenticated_user(
+            self.client,
+            reverse('users:show_profile', kwargs={'username': u.username})
+        )
+        self.assertEquals(rsp.status_code, 200)
+
     def test_correct_context_variables_passed_to_template(self):
-        user, rsp = utils.get_response_with_authenticated_user(self.client,
-                                                               reverse('home'))
+        u = utils.create_user('test')
+        request_user, rsp = utils.get_response_with_authenticated_user(
+            self.client,
+            reverse('users:show_profile', kwargs={'username': u.username})
+        )
+
         # profile context variable should be
         #   the user object that made the request
-        self.assertEquals(rsp.context['profile'], user)
+        self.assertEquals(rsp.context['profile'], u)
         self.assertIn('twicles', rsp.context.keys())
+        self.assertIn('display_unfollow', rsp.context.keys())
         self.assertIsInstance(rsp.context['followers_count'], int)
         self.assertIsInstance(rsp.context['following_count'], int)
         self.assertIsInstance(rsp.context['new_twicle_form'], NewTwicleForm)
 
-        # TODO: Testear más cosas, como que esté el link a seguir o
-        #  dejar de seguir según el usuario está o no autenticado
-        #  y que de 404 si el usuario que se pide ver no existe, etc...
+    # def test_anonymous_user_does_not_see_unfollow_link(self):
+    #     u = utils.create_user('test')   # Create the user to request her profile
+    #
+    #     # Request her profile with an authenticated user
+    #     request_user, rsp = utils.get_response_with_authenticated_user(
+    #         self.client,
+    #         reverse('users:show_profile', kwargs={'username': u.username})
+    #     )
+    #
+    #     # Check that she sees the follow link
+    #     self.assertInHTML('<a href="' +
+    #                       reverse('users:follow',
+    #                               kwargs={'username': u.username,
+    #                                       'action': 'f'})
+    #                       + '">Seguir</a>',
+    #                       rsp.content)
+
+    def test_nonexisting_username_returns_404(self):
+        rsp = self.client.get(reverse('users:show_profile',
+                                      kwargs={'username': 'inexistente'}))
+        self.assertEquals(rsp.status_code, 404)
+
+    def test_new_twicle_form_includes_at_username(self):
+        """
+        Checks that twicle posting form in the profile view
+        is filled with @username, where <username> is the name
+        of the user whose profile is shown
+        """
+        # create a user to have a profile to show
+        u = utils.create_user('test')
+        # anonymous user makes the request
+        rsp = self.client.get(reverse('users:show_profile',
+                                      kwargs={'username': u.username}))
+        # QUESTION: Hay una mejor manera de checkear esto?
+        self.assertIn('@' + u.username,
+                      rsp.context['new_twicle_form'].as_p())
