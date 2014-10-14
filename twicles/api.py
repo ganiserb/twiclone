@@ -26,9 +26,9 @@ def jsonify_twicle_queryset(twicles_queryset):
             'author_username': twicle.author.username,
             'author_pk': twicle.author.id,
             'image': twicle.image.url if bool(twicle.image) else '',
-            'created': dumps(twicle.created, cls=DjangoJSONEncoder)
+            'created': twicle.created,
         })
-    return dumps(twicles)
+    return twicles
 
 
 def retrieve_subscribed_twicles(username, amount=defaults.twicles_per_page):

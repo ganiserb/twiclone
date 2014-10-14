@@ -74,6 +74,5 @@ class ShowProfileViewTests(TestCase):
         # anonymous user makes the request
         rsp = self.client.get(reverse('users:show_profile',
                                       kwargs={'username': u.username}))
-        # QUESTION: Hay una mejor manera de checkear esto?
         self.assertIn('@' + u.username,
-                      rsp.context['new_twicle_form'].as_p())
+                      rsp.context['new_twicle_form'].initial['text'])

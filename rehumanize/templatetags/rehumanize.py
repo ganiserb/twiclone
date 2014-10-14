@@ -9,5 +9,5 @@ register = template.Library()
 @register.filter
 @stringfilter
 def rehumanize(value):
-    cosa = value.replace('\\u00a0', ' ')
+    cosa = value.replace('\\u00a0', '\u00a0')
     return cosa

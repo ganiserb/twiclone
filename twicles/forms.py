@@ -18,7 +18,7 @@ class NewTwicleForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
 
         # Put these kwargs as the initial data of the form
-        initial = {}
+        initial = kwargs.get('initial', {})
         for field in ('next', 'text'):
             if field in kwargs:
                 initial[field] = kwargs[field]

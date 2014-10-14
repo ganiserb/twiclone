@@ -43,7 +43,4 @@ class Twicle(models.Model):
     image = models.ImageField(upload_to="twiclo_images", blank=True)
 
     def __str__(self):
-        # QUESTION: Como assertQuerysetEqual compara por repr() me conviene
-        #   meter acá la pk para que compare bien? o_O
-        #   Se puede usar transform=lambda x: x.id en los tests sino...
-        return str(self.id) + '| ' + self.text
+        return self.text

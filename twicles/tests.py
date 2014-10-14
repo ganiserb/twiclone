@@ -1,9 +1,9 @@
 # coding=utf-8
 from django.test import TestCase
 from django.core.urlresolvers import reverse
+from django.http import Http404
 
 from twicles.api import retrieve_subscribed_twicles
-from twicles.models import Twicle
 from twicles import defaults, forms
 from tests import utils
 import users
@@ -89,11 +89,7 @@ class ApiRetrieveSubscribedTwiclesTests(TestCase):
                                  ordered=False,
                                  transform=lambda obj: obj.id)
 
-        # def test_raise_404_if_user_with_provided_username_does_not_exist(self):
-        # QUESTION: Esto no se puede testear acá :/
-        # https://docs.djangoproject.com/en/1.7/topics/testing/tools/#exceptions
-
-        #self.assertRaises(Http404, retrieve_subscribed_twicles('nonexistent'))
+        self.assertRaises(Http404, retrieve_subscribed_twicles, 'nonexistent')
 
 
 class HomeViewTests(TestCase):

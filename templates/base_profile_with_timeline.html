@@ -9,10 +9,7 @@
 
 {% block content %}
 
-{% with TODO='hacer que esto controle edition_allowed' %}   {# TODO #}
-
     {#  Profile  #}
-    {# QUESTION: Cómo meto el form este de perfil en un html aparte? Está partido #}
     {% if profile_form.errors %}
         <ol>
             {{ profile_form.errors }}
@@ -146,7 +143,6 @@
         </div>
     </div>
 
-{% endwith %}
 
     {% block twicle_list_top %}
     {% endblock twicle_list_top %}
@@ -157,6 +153,7 @@
     {#  Twicle list container  #}
     <div class="col-md-12">
         <ul class="list-group">
+        <li class="list-group-item">{{ TODO }}</li>
         {% for twicle in twicles %}
             <li class="list-group-item">
                     <div class="row">   {# Twicle content #}

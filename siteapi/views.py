@@ -1,6 +1,6 @@
 # coding=utf-8
 from django.shortcuts import HttpResponse
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, JsonResponse
 
 from twicles import api
 
@@ -13,7 +13,9 @@ def home(request):
     :param request:
     :return:
     """
-    # QUESTION: Esto es muy ilegible? Setear este parametro opcional así?
+
+    # TODO: Usar un dict kwargs para armar los parámetros si
+    # viene amount a la URL
 
     if request.user.is_authenticated():
         # Build a parameters tuple to call the api function later
@@ -28,7 +30,7 @@ def home(request):
             api.retrieve_subscribed_twicles(*param)
         )
 
-        return HttpResponse(twicles)
+        return JsonResponse(twicles, safe=False)
     else:
         return HttpResponseForbidden("User not logged in")
 
@@ -51,4 +53,4 @@ def profile(request, username):
         api.retrieve_user_twicles(*param)
     )
 
-    return HttpResponse(twicles)
+    return JsonResponse(twicles, safe=False)

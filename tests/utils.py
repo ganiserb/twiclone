@@ -43,8 +43,6 @@ def create_twicles(user, amount):
     :param amount:  The amount to create
     :return:        List of twicles created
     """
-    # QUESTION: Cómo hacer esto PEP8?
-    return [Twicle.objects.create(text='twicle' + str(n)
-                                       + str(user.username),
+    return [Twicle.objects.create(text='twicle' + str(n) + str(user.username),
                                   author=user)
             for n in range(amount)]

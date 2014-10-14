@@ -92,7 +92,7 @@ def post_profile_form(request):
             request.session['profile_form_with_errors'] = request.POST.copy()
                 # We're not saving the avatar image, though...
 
-    # QUESTION: Si no viene un POST qué? -> Que redireccione por defecto a algún lugar TODO!
+    # TODO: Si no viene un POST qué? -> Que redireccione por defecto a algún lugar TODO!
     return HttpResponseRedirect(request.POST['next'])
 
 
@@ -142,10 +142,8 @@ def follow_control(request, username, action):
     requested_user = get_object_or_404(User, username=username)
     exists = request.user.following.filter(id=requested_user.id).exists()
 
-    # QUESTION: Esto está funcionando con GET. Para hacerlo con POST pero
-    #   sin andar usando un form ni JS?
-    #   O sea, sin tener un <form> que no salga de un forms.py...
-    #   Hay alguna manera de que sea así de sencillo como con el GET?
+    # TODO: Esto está funcionando con GET. Para hacerlo con POST
+    #   USAR JS
     if exists and action == 'u':
         request.user.following.remove(requested_user)
 

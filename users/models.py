@@ -1,10 +1,7 @@
 # coding=utf-8
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-#from twiclone import settings
-# QUESTION: Cómo tener en settings la constante del avatar o la cantidad de posts a mostrar en twicle.UserSettings?
-#   RESPUESTA: Tener un archivo deflaults.py en el que defino esas cosas y lo importo luego desde models.py y
-#   desde cualquier otro lado que lo necesite
+
 
 class InterestTag(models.Model):
     tag_name = models.CharField(max_length=25, unique=True)

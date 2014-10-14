@@ -1,6 +1,5 @@
 # coding=utf-8
 from django.test import TestCase
-import unittest
 from django.core.urlresolvers import reverse
 from mock import patch, MagicMock
 import json
@@ -36,18 +35,12 @@ class CommonJsonViewTests(object):
             valid_json = False
         self.assertEquals(valid_json, True)
 
-    # QUESTION: Cómo hago esto? Necesito pasar parametros por GET
-    #   y ver que la función que mockeo que se usa adentro se llame bien
-    #   O sea:
-    #         si le paso parametros que se los pase a la funcion
-    #         si no le paso nada, que use el por defecto
-    #              (o sea, reciba 1 solo parámetro)
-
-    # def test_retrieve_function_receives_amount_parameter_from_http_get(self):
-    #     # Patch retrieve function with mock
-    #     with patch(self.retrieve_function, new=MagicMock()) as rf:
-    #         rsp = self.client.get(self.url + '?amount=a10')
-    #         rf.assertCalledOnceWith(username='pepe', amount=10)
+    def test_retrieve_function_receives_amount_parameter_from_http_get(self):
+        # Patch retrieve function with mock
+        with patch(self.retrieve_function, new=MagicMock()) as rf:
+            rsp = self.client.get(self.url + '?amount=10')
+            rf.assertCalledOnceWith(username='pepe', amount=10)
+            # TODO: Agregar + asserts
 
 
 class HomeJsonViewTests(TestCase, CommonJsonViewTests):
