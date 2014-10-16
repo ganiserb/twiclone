@@ -1,21 +1,20 @@
 # coding=utf-8
 from django.test import TestCase
 from django.core.urlresolvers import reverse
+from django.shortcuts import HttpResponse
 from mock import patch, MagicMock
 import json
 from siteapi import views
 
 from tests import utils
 
-# JSON válido
-# mocking de retrieve... que reciba bien los parámetros (con amount o sin)
-# que si estoy logueado devuelva 200
-# que si le tiro un post siga funcionando igual (?)
 
 class CommonJsonViewTests(object):
     view = None
     url = None
     retrieve_function = None    # Function to mock for the views
+    # Common for all JSON views
+    jsonify_function = 'siteapi.views.api.jsonify_twicle_queryset'
 
     def test_authenticated_user_gets_http_200(self):
         user, rsp = utils.get_response_with_authenticated_user(self.client,
@@ -34,13 +33,40 @@ class CommonJsonViewTests(object):
         except ValueError:
             valid_json = False
         self.assertEquals(valid_json, True)
+        self.assertEquals(rsp['Content-Type'], 'application/json')
 
     def test_retrieve_function_receives_amount_parameter_from_http_get(self):
         # Patch retrieve function with mock
         with patch(self.retrieve_function, new=MagicMock()) as rf:
             rsp = self.client.get(self.url + '?amount=10')
             rf.assertCalledOnceWith(username='pepe', amount=10)
-            # TODO: Agregar + asserts
+
+    def test_view_obtains_twicles_from_retrieve_function(self):
+        retrieve_function_mock = MagicMock()
+        jsonify_function_mock = MagicMock()
+        json_response_mock = MagicMock()
+
+        retrieve_function_mock.return_value = ['test']
+        jsonify_function_mock.return_value = 'blah, this is json'
+
+        json_response_mock.return_value = HttpResponse()
+
+        with patch(self.retrieve_function, new=retrieve_function_mock), \
+             patch(self.jsonify_function, new=jsonify_function_mock), \
+             patch('siteapi.views.JsonResponse', new=json_response_mock):
+            # With these two functions patched, we can now call the view
+            #   (but authenticated, so it works for both views)
+
+            user, rsp = utils.get_response_with_authenticated_user(
+                self.client,
+                self.url
+            )
+
+            self.assertTrue(retrieve_function_mock.called)
+            self.assertEquals(retrieve_function_mock.call_count, 1)
+
+            self.assertTrue(jsonify_function_mock.called)
+            self.assertEquals(jsonify_function_mock.call_count, 1)
 
 
 class HomeJsonViewTests(TestCase, CommonJsonViewTests):

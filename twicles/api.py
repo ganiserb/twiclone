@@ -69,6 +69,12 @@ def retrieve_user_twicles(username, amount=defaults.twicles_per_page):
     :return:            a queryset of twicles that do NOT belong to <username>,
                         ordered by publication date. Newer first
     """
+    if amount < defaults.twicles_per_page_min_value:
+        raise ValueError('%s is less than the mimimum amount'
+                         ' of twicles to retrieve' % amount)
+    elif amount < 0:
+        raise ValueError('%s is a negative amount'
+                         'of twicles to retrieve' % amount)
     user = get_object_or_404(User, username=username)
     twicles = Twicle.objects.filter(author__exact=user) \
                             .order_by('-created')[:amount]

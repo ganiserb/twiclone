@@ -1,6 +1,6 @@
 # coding=utf-8
 from django.shortcuts import HttpResponse
-from django.http import HttpResponseForbidden, JsonResponse
+from django.http import HttpResponseForbidden, JsonResponse, Http404
 
 from twicles import api
 
@@ -13,21 +13,20 @@ def home(request):
     :param request:
     :return:
     """
-
-    # TODO: Usar un dict kwargs para armar los parámetros si
-    # viene amount a la URL
-
     if request.user.is_authenticated():
-        # Build a parameters tuple to call the api function later
-        param = (request.user.username,)
+        # Build parameters to call the api function later
+        kwargs = {'username': request.user.username}
+
         if 'amount' in request.GET:
             # There's an "amount" of twicles in the request,
             #   so we add it to the parameters
-            amount = int(request.GET['amount'])  # Puede reventar
-            param += (amount,)
+            try:    # QUESTION: Está bien hacer esto? Si no puede convertit a int porque me ponen un string, dejo que reviente?
+                kwargs['amount'] = int(request.GET['amount'])
+            except ValueError:
+                raise Http404
 
         twicles = api.jsonify_twicle_queryset(
-            api.retrieve_subscribed_twicles(*param)
+            api.retrieve_subscribed_twicles(**kwargs)
         )
 
         return JsonResponse(twicles, safe=False)
