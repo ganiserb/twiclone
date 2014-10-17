@@ -24,4 +24,5 @@ urlpatterns = patterns('',
 
     url(r'^(?P<username>' + username_regex + r')/$',
         views.show_profile,
-        name='show_profile'),)
+        name='show_profile'),
+)

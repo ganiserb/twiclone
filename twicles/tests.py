@@ -6,9 +6,9 @@ from django.http import Http404, HttpResponse
 
 from twicles.api import retrieve_subscribed_twicles, retrieve_user_twicles
 from twicles import defaults, forms
+import twicles
 from tests import utils
 import users
-from twicles import views
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
@@ -151,53 +151,26 @@ class ApiRetrieveProfileTwiclesTests(TestCase, CommonRetrieveTests):
                                  ordered=False,
                                  transform=lambda obj: obj.id)
 
-#
-# class CommonViewTests(object):
-#     view = None
-#     url = None
-#     retrieve_function = None
-#
-#     def test_view_gets_twicles_from_retrieve_function(self):
-#         retrieve_function_mock = MagicMock()
-#         json_response_mock = MagicMock()
-#
-#         retrieve_function_mock.return_value = ['test']
-#
-#         json_response_mock.return_value = HttpResponse()
-#
-#         with patch(self.retrieve_function, new=retrieve_function_mock), \
-#              patch('siteapi.views.JsonResponse', new=json_response_mock):
-#             # With these two functions patched, we can now call the view
-#             #   (but authenticated, so it works for both views)
-#
-#             user, rsp = utils.get_response_with_authenticated_user(
-#                 self.client,
-#                 self.url
-#             )
-#
-#             self.assertTrue(retrieve_function_mock.called)
-#             self.assertEquals(retrieve_function_mock.call_count, 1)
-
 
 class HomeViewTests(TestCase):#, CommonViewTests):
 
     def setUp(self):
-        self.retrieve_function = 'twicles.views.retrieve_subscribed_twicles'
-        self.view = views.home
+        # self.retrieve_function =
+        #self.view = views.home
         self.url = reverse('home')
 
     def test_anonymous_user_gets_redirected(self):
-        rsp = self.client.get(reverse('home'))
+        rsp = self.client.get(self.url)
         self.assertEquals(rsp.status_code, 302)
 
     def test_authenticated_user_gets_http_200(self):
         user, rsp = utils.get_response_with_authenticated_user(self.client,
-                                                               reverse('home'))
+                                                               self.url)
         self.assertEquals(rsp.status_code, 200)
 
     def test_context_elements_that_should_always_be_passed_to_template(self):
         user, rsp = utils.get_response_with_authenticated_user(self.client,
-                                                               reverse('home'))
+                                                               self.url)
         # profile context variable should be
         #   the user object that made the request
         self.assertEquals(rsp.context['profile'], user)
@@ -213,6 +186,24 @@ class HomeViewTests(TestCase):#, CommonViewTests):
         self.assertIsInstance(rsp.context['new_tag_form'],
                               users.forms.TagForm)
 
+    def test_view_gets_twicles_from_retrieve_function(self):
+        retrieve_function_mock = MagicMock()
+        retrieve_function_mock.return_value = ['test']
+        mock = MagicMock()
+        request_mock = MagicMock()
 
-# class ProfileViewTests(TestCase, CommonViewTests):
-#     raise NotImplementedError
+        with patch('twicles.views.retrieve_subscribed_twicles',
+                   new=retrieve_function_mock),\
+             patch('twicles.views.UserSettings',
+                   new=mock), \
+             patch('twicles.views.ProfileForm', new=mock),\
+             patch('twicles.views.ProfileTagsForm', new=mock),\
+             patch('twicles.views.TagForm', new=mock),\
+             patch('twicles.views.NewTwicleForm', new=mock),\
+             patch('twicles.views.render', new=mock):
+
+            # Call the view directly
+            twicles.views.home(request_mock)
+
+        self.assertTrue(retrieve_function_mock.called)
+        self.assertEquals(retrieve_function_mock.call_count, 1)

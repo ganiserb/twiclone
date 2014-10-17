@@ -79,13 +79,17 @@ def home(request):
                                               'user_id': request.user.id})
 
     if "new_tag_form_with_errors" in request.session:
-        new_tag_form = TagForm(request.session.get('new_tag_form_with_errors'))
+        new_tag_form = TagForm(
+            request.session.get('new_tag_form_with_errors')
+        )
         del request.session['new_tag_form_with_errors']
     else:
         new_tag_form = TagForm(initial={'next': reverse('home')})
 
     if "new_twicle_form_with_errors" in request.session:
-        new_twicle_form = NewTwicleForm(request.session.get('new_twicle_form_with_errors'))
+        new_twicle_form = NewTwicleForm(
+            request.session.get('new_twicle_form_with_errors')
+        )
         del request.session['new_twicle_form_with_errors']
     else:
         new_twicle_form = NewTwicleForm(initial={'next': reverse('home')})
@@ -94,7 +98,7 @@ def home(request):
                   'twicles/home.html',
                   {'twicles': twicles,
                    'profile': request.user,
-                   'edition_allowed': True,  # Si ve la home es porque es su propio perfil
+                   'edition_allowed': True,
                    'profile_form': profile_form,
                    'new_tag_form': new_tag_form,
                    'edit_tags_form': edit_tags_form,
