@@ -18,9 +18,9 @@ urlpatterns = patterns('',
         views.post_edit_tags_form,
         name='post_edit_tags_form'),
 
-    url(r'^(?P<username>' + username_regex + r')/follow/(?P<action>.+)/$',
+    url(r'^follow_control/$',
         views.follow_control,
-        name='follow'),  # action: 1 letter
+        name='follow'),
 
     url(r'^(?P<username>' + username_regex + r')/$',
         views.show_profile,

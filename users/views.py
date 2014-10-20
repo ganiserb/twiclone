@@ -135,21 +135,24 @@ def post_edit_tags_form(request):
 
 
 @login_required()
-def follow_control(request, username, action):
+def follow_control(request):
     """
     Adds or removes the requested user to the <following> list of the currently logged in user
     """
-    requested_user = get_object_or_404(User, username=username)
-    exists = request.user.following.filter(id=requested_user.id).exists()
+    if request.method == "POST":
+        username = request.POST['username']
+        action = request.POST['action']
 
-    # TODO: Esto está funcionando con GET. Para hacerlo con POST
-    #   USAR JS
-    if exists and action == 'u':
-        request.user.following.remove(requested_user)
+        requested_user = get_object_or_404(User,
+                                           username=username)
+        exists = request.user.following.filter(id=requested_user.id).exists()
 
-    if not exists and action == 'f':
-        request.user.following.add(requested_user)
+        if exists and action == 'u':
+            request.user.following.remove(requested_user)
+        if not exists and action == 'f':
+            request.user.following.add(requested_user)
 
-    return HttpResponseRedirect(reverse(
-        'users:show_profile',
-        kwargs={'username': username}))
+        return HttpResponse('POST captured')
+
+    else:
+        return HttpResponse('Invalid HTTP method')
