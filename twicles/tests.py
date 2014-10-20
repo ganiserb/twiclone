@@ -152,11 +152,9 @@ class ApiRetrieveProfileTwiclesTests(TestCase, CommonRetrieveTests):
                                  transform=lambda obj: obj.id)
 
 
-class HomeViewTests(TestCase):#, CommonViewTests):
+class HomeViewTests(TestCase):   # , CommonViewTests):
 
     def setUp(self):
-        # self.retrieve_function =
-        #self.view = views.home
         self.url = reverse('home')
 
     def test_anonymous_user_gets_redirected(self):
@@ -186,11 +184,11 @@ class HomeViewTests(TestCase):#, CommonViewTests):
         self.assertIsInstance(rsp.context['new_tag_form'],
                               users.forms.TagForm)
 
+    # QUESTION: Cómo no repetir el código de los siguientes 2 tests que sólo difieren en el setup de los mocks?
     def test_view_gets_twicles_from_retrieve_function(self):
         retrieve_function_mock = MagicMock()
         retrieve_function_mock.return_value = ['test']
         mock = MagicMock()
-        request_mock = MagicMock()
 
         with patch('twicles.views.retrieve_subscribed_twicles',
                    new=retrieve_function_mock),\
@@ -202,8 +200,35 @@ class HomeViewTests(TestCase):#, CommonViewTests):
              patch('twicles.views.NewTwicleForm', new=mock),\
              patch('twicles.views.render', new=mock):
 
-            # Call the view directly
-            twicles.views.home(request_mock)
+            # Call the view directly to test later
+            twicles.views.home(mock)
 
         self.assertTrue(retrieve_function_mock.called)
         self.assertEquals(retrieve_function_mock.call_count, 1)
+
+    def test_view_calls_retrieve_function_properly(self):
+        retrieve_function_mock = MagicMock()
+        retrieve_function_mock.return_value = ['test']
+        mock = MagicMock()
+        request_mock = MagicMock()
+        user_settings_mock = MagicMock()
+
+        with patch('twicles.views.retrieve_subscribed_twicles',
+                   new=retrieve_function_mock),\
+             patch('twicles.views.UserSettings',
+                   new=user_settings_mock), \
+             patch('twicles.views.ProfileForm', new=mock),\
+             patch('twicles.views.ProfileTagsForm', new=mock),\
+             patch('twicles.views.TagForm', new=mock),\
+             patch('twicles.views.NewTwicleForm', new=mock),\
+             patch('twicles.views.render', new=mock):
+
+            request_mock.user = 'utest'
+            user_settings_mock.objects.get().twicles_per_page = '100'
+            # TODO: Agregar ahora el parámetro amount!
+
+            # Call the view directly to test later
+            twicles.views.home(request_mock)
+
+        retrieve_function_mock.assert_called_once_with('utest', 100)
+
