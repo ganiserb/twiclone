@@ -96,8 +96,7 @@ def post_profile_form(request):
             request.session['profile_form_with_errors'] = request.POST.copy()
                 # We're not saving the avatar image, though...
 
-    # TODO: Si no viene un POST qué? -> Que redireccione por defecto a algún lugar TODO!
-    return HttpResponseRedirect(request.POST['next'])
+    return HttpResponseRedirect(reverse('home'))
 
 
 @login_required()
@@ -111,7 +110,7 @@ def post_new_tag_form(request):
         else:
             request.session['new_tag_form_with_errors'] = request.POST
 
-    return HttpResponseRedirect(request.POST['next'])
+    return HttpResponseRedirect(reverse('home'))
 
 
 @login_required()
@@ -135,7 +134,7 @@ def post_edit_tags_form(request):
         else:
             request.session['edit_tags_form_with_errors'] = request.POST.copy()
 
-    return HttpResponseRedirect(request.POST['next'])
+    return HttpResponseRedirect(reverse('home'))
 
 
 @login_required()

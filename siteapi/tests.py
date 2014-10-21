@@ -42,6 +42,10 @@ class CommonJsonViewTests(object):
             rf.assertCalledOnceWith(username='pepe', amount=10)
 
     def test_view_obtains_twicles_from_retrieve_function(self):
+        """
+        Checks that the api functions are really called
+        to get the twicles
+        """
         retrieve_function_mock = MagicMock()
         jsonify_function_mock = MagicMock()
         json_response_mock = MagicMock()
@@ -83,6 +87,8 @@ class HomeJsonViewTests(TestCase, CommonJsonViewTests):
         rsp = self.client.get(self.url)
         self.assertEquals(rsp.status_code, 403)
 
+    # TODO: Ver que además se llamen bien las funciones de la api con los parámetros que le van
+
 
 class ProfileJsonView(TestCase, CommonJsonViewTests):
 
@@ -101,3 +107,5 @@ class ProfileJsonView(TestCase, CommonJsonViewTests):
         rsp = self.client.get(reverse('api:profile',
                                       kwargs={'username': 'idonotexist'}))
         self.assertEquals(rsp.status_code, 404)
+
+    # TODO: Ver que además se llamen bien las funciones de la api con los parámetros que le van

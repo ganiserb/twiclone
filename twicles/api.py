@@ -5,10 +5,6 @@ from django.contrib.auth import get_user_model
 from twicles import defaults
 from twicles.models import UserSettings
 
-# Django datetime enconder
-from django.core.serializers.json import DjangoJSONEncoder
-from json import dumps
-
 User = get_user_model()
 from twicles.models import Twicle
 
@@ -66,11 +62,11 @@ def retrieve_subscribed_twicles(username, amount=defaults.twicles_per_page):
     ).filter(
         id__in=user.followed_by.all()
     )
-    # QUESTION
-    # Joineo así?
+
+    # This enforces the privacy restrictions set by the user settings
+    # QUESTION: Joineo así? Me tiraba error "sumando" querysets
     following_users = list(following_with_private_twicles_following_me) + list(following_with_public_twicles)
 
-    # TODO: Agregar opciones de privacidad, que sólo obtenga los de aquellos que puede
     twicles = Twicle.objects.filter(author__in=following_users) \
                             .select_related('author') \
                             .order_by('-created')[:amount]
@@ -99,8 +95,8 @@ def retrieve_user_twicles(username,
                          'of twicles to retrieve' % amount)
     user = get_object_or_404(User, username=username)
 
-    # QUESTION: Esto es un quilombo, pero es la mejor manera que encontré
-    #   para hacerlo sin confundirme
+    # QUESTION: Esto es un quilombo de ifs, pero es la mejor manera que encontré
+    #   para hacerlo sin confundirme... mejoras? Cómo pensarlo sin perderse?
     if user.usersettings.visibility == UserSettings.FOLLOWING:
         if not requester:
             twicles = Twicle.objects.none()

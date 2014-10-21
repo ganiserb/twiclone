@@ -59,7 +59,7 @@ class ShowProfileViewTests(TestCase):
             self.client,
             reverse('users:show_profile', kwargs={'username': u.username}),
         )
-        self.assertIn('follow_control_action="f";',
+        self.assertIn('follow_control_action="f";',  # Check this way because JS
                       rsp.content.decode('utf-8'))
 
     def test_authenticated_user_sees_unfollow_link(self):
@@ -71,7 +71,7 @@ class ShowProfileViewTests(TestCase):
             reverse('users:show_profile', kwargs={'username': u.username}),
             user=o
         )
-        self.assertIn('follow_control_action="u";',
+        self.assertIn('follow_control_action="u";',  # Check this way because JS
                       rsp.content.decode('utf-8'))
 
     def test_authenticated_user_does_not_see_follow_control_on_her_own_profile(self):

@@ -2,7 +2,7 @@
 from django.test import TestCase
 from mock import MagicMock, patch
 from django.core.urlresolvers import reverse
-from django.http import Http404, HttpResponse
+from django.http import Http404
 
 from twicles.api import retrieve_subscribed_twicles, retrieve_user_twicles
 from twicles import defaults, forms, models, views
@@ -81,6 +81,7 @@ class ApiRetrieveSubscribedTwiclesTests(TestCase, CommonRetrieveTests):
         user1 = User.objects.create(username='u1')
         user2 = User.objects.create(username='u2')
         user3 = User.objects.create(username='u3')
+        user4 = User.objects.create(username='u4')
 
         # user1 starts following user2
         user1.following.add(user2)
@@ -89,21 +90,30 @@ class ApiRetrieveSubscribedTwiclesTests(TestCase, CommonRetrieveTests):
         twicles_user1 = utils.create_twicles(user1, 5)
 
         # user2 publishes some twicles
-        twicles_user2 = utils.create_twicles(user2, 5)
+        utils.create_twicles(user2, 5)
+
+        # user2 is concerned about privacy, so he doesn't want everyone seen his
+        #   twicles:
+        user2.usersettings.visibility = models.UserSettings.FOLLOWING
+        user2.usersettings.save()
 
         # user3 publishes some twicles
         twicles_user3 = utils.create_twicles(user3, 5)
+
+        # user1 starts following user3 because user2 disappeared
+        user1.following.add(user3)
+
+        # user4 publishes some twicles, but nobody notices...
+        utils.create_twicles(user4, 5)
 
         # check that only user1 and user2 twicles are returned
         #   in no particular order
         self.assertQuerysetEqual(retrieve_subscribed_twicles(user1.username),
                                  [twicle.id
                                   for twicle
-                                  in twicles_user1 + twicles_user2],
+                                  in twicles_user1 + twicles_user3],
                                  ordered=False,
                                  transform=lambda obj: obj.id)
-
-        self.assertRaises(Http404, retrieve_subscribed_twicles, 'nonexistent')
 
 
 class ApiRetrieveProfileTwiclesTests(TestCase, CommonRetrieveTests):
@@ -223,6 +233,10 @@ class HomeViewTests(TestCase):
 
     # QUESTION: Cómo no repetir el código de patcheo de los siguientes 2 tests que sólo difieren en el setup de los mocks?
     def test_view_gets_twicles_from_retrieve_function(self):
+        """
+        Checks that the api function is really used for retrieving
+        the view twicles
+        """
         retrieve_function_mock = MagicMock()
         retrieve_function_mock.return_value = ['test']
         mock = MagicMock()
@@ -244,8 +258,10 @@ class HomeViewTests(TestCase):
         self.assertEquals(retrieve_function_mock.call_count, 1)
 
     def test_view_calls_retrieve_function_properly(self):
+        """
+        Checks that the api functions is properly called
+        """
         retrieve_function_mock = MagicMock()
-        retrieve_function_mock.return_value = ['test']
         mock = MagicMock()
         request_mock = MagicMock()
         user_mock = MagicMock()
@@ -257,7 +273,7 @@ class HomeViewTests(TestCase):
         with patch('twicles.views.retrieve_subscribed_twicles',
                    new=retrieve_function_mock),\
              patch('twicles.views.UserSettings',
-                   new=user_settings_mock), \
+                   new=user_settings_mock),\
              patch('twicles.views.ProfileForm', new=mock),\
              patch('twicles.views.ProfileTagsForm', new=mock),\
              patch('twicles.views.TagForm', new=mock),\
@@ -266,14 +282,7 @@ class HomeViewTests(TestCase):
 
             user_settings_mock.objects.get().twicles_per_page = 100
 
-            # Call the view directly to test later
+            # Call the view directly
             views.home(request_mock)
 
         retrieve_function_mock.assert_called_once_with(user_mock, 100)
-        # QUESTION! Por qué no funciona! Si el id del mock es el mismo!
-        #   Cómo hago para que request_mock.user sea "algo" que pueda comparar
-        #   tipo un string, y para que request_mock.is_authenticated devuelva
-        #   True?
-        # QUESTION: El decorador @login_required debería estar actuando por más
-        #   que esté llamando a la función de la view directamente?
-

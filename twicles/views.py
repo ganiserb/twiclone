@@ -28,7 +28,7 @@ def post_twicle(request):
         else:
             request.session['new_twicle_form_with_errors'] = request.POST
 
-    return HttpResponseRedirect(request.POST['next'])
+    return HttpResponseRedirect(reverse('home'))
 
 
 @login_required()
