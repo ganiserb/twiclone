@@ -1,9 +1,11 @@
 # coding=utf-8
 from django.test import TestCase
 from django.core.urlresolvers import reverse
+from mock import MagicMock, patch
 
 from twicles.forms import NewTwicleForm
 from tests import utils
+import users
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
@@ -76,3 +78,27 @@ class ShowProfileViewTests(TestCase):
                                       kwargs={'username': u.username}))
         self.assertIn('@' + u.username,
                       rsp.context['new_twicle_form'].initial['text'])
+
+    def test_view_calls_retrieve_function_properly(self):
+        retrieve_function_mock = MagicMock()
+        mock = MagicMock()
+        request_mock = MagicMock()
+        user_settings_mock = MagicMock()
+
+        with patch('users.views.retrieve_user_twicles',
+                   new=retrieve_function_mock),\
+             patch('users.views.UserSettings',
+                   new=user_settings_mock), \
+             patch('users.views.render', new=mock),\
+             patch('users.views.defaults', new=mock):
+
+            request_mock.is_authenticated.return_value = False
+            users.views.show_profile(request_mock, 'utest')
+            # Unauthenticated... The amount is the mock that mocks the defaults
+            retrieve_function_mock.assert_called_once_with('utest', mock)
+
+            user_settings_mock.objects.get().twicles_per_page = 100
+            request_mock.is_authenticated.return_value = True
+            users.views.show_profile(request_mock, 'utest')
+            # Authenticated... The amount is the value from the user settings
+            retrieve_function_mock.assert_called_once_with('utest', 100)

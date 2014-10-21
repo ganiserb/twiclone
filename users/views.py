@@ -14,6 +14,7 @@ from users.forms import ProfileForm, ProfileTagsForm, TagForm, UserCreationForm
 from twicles.models import Twicle, UserSettings
 from twicles import defaults
 from twicles.forms import NewTwicleForm
+from twicles.api import retrieve_user_twicles
 
 
 def register(request):
@@ -51,8 +52,9 @@ def show_profile(request, username):
         amount = defaults.twicles_per_page
         display_unfollow = None
 
-    twicles = Twicle.objects.filter(author=user_shown)\
-                            .order_by('-created')[:amount]
+    # twicles = Twicle.objects.filter(author=user_shown)\
+    #                         .order_by('-created')[:amount]
+    twicles = retrieve_user_twicles(user_shown.username, amount)
 
     new_twicle_form = NewTwicleForm(next=reverse('users:show_profile',
                                                  kwargs={'username': username}),
