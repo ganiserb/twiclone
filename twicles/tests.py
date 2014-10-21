@@ -248,7 +248,9 @@ class HomeViewTests(TestCase):
         retrieve_function_mock.return_value = ['test']
         mock = MagicMock()
         request_mock = MagicMock()
-        request_mock.user.is_authenticated.return_value = True  # Always in home!
+        user_mock = MagicMock()
+        request_mock.user = user_mock
+        user_mock.is_authenticated.return_value = True  # Always in home!
 
         user_settings_mock = MagicMock()
 
@@ -262,12 +264,12 @@ class HomeViewTests(TestCase):
              patch('twicles.views.NewTwicleForm', new=mock),\
              patch('twicles.views.render', new=mock):
 
-            user_settings_mock.objects.get().twicles_per_page = '100'
+            user_settings_mock.objects.get().twicles_per_page = 100
 
             # Call the view directly to test later
             views.home(request_mock)
 
-        retrieve_function_mock.assert_called_once_with(request_mock.user, 100)
+        retrieve_function_mock.assert_called_once_with(user_mock, 100)
         # QUESTION! Por qué no funciona! Si el id del mock es el mismo!
         #   Cómo hago para que request_mock.user sea "algo" que pueda comparar
         #   tipo un string, y para que request_mock.is_authenticated devuelva

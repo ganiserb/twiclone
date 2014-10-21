@@ -45,11 +45,9 @@ def show_profile(request, username):
                         viewed
     """
     user_shown = get_object_or_404(User, username=username)
-    edition_allowed = False  # Controls the displaying of follow link
     if request.user.is_authenticated():
         amount = UserSettings.objects.get(user=request.user).twicles_per_page
         display_unfollow = request.user.following.filter(id=user_shown.id).exists()
-        edition_allowed = not request.user.username == username
     else:
         amount = defaults.twicles_per_page
         display_unfollow = None

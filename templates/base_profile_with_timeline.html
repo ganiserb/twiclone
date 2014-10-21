@@ -48,29 +48,31 @@
                 {# This user is not me, therefore I may [un]follow it #}
 
                 {% if user.is_authenticated %}
-                    <script>
-                    {#  Set variable so the script knows where to post  #}
-                    var follow_control_url="{% url 'users:follow' %}";
-                    var follow_control_username="{{ profile.username }}";
+                    {% if user != profile %}
+                        <script>
+                        {#  Set variable so the script knows where to post  #}
+                        var follow_control_url="{% url 'users:follow' %}";
+                        var follow_control_username="{{ profile.username }}";
 
-                    {% if display_unfollow %}
-                        var follow_control_action="u";
-                    {% else %}
-                        var follow_control_action="f";
-                    {% endif %}
-
-                    </script>
-                    <script src="{% static "follow_control.js" %}"></script>
-
-
-
-                    <a id="follow_control_button" href="#">
                         {% if display_unfollow %}
-                            Dejar de seguir
+                            var follow_control_action="u";
                         {% else %}
-                            Seguir
+                            var follow_control_action="f";
                         {% endif %}
-                    </a>
+
+                        </script>
+                        <script src="{% static "follow_control.js" %}"></script>
+
+
+
+                        <a id="follow_control_button" href="#">
+                            {% if display_unfollow %}
+                                Dejar de seguir
+                            {% else %}
+                                Seguir
+                            {% endif %}
+                        </a>
+                    {% endif %}
                 {% endif %}
             {% endif %}
 

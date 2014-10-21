@@ -104,27 +104,38 @@ class ShowProfileViewTests(TestCase):
                       rsp.context['new_twicle_form'].initial['text'])
 
     def test_view_calls_retrieve_function_properly(self):
-        # QUESTION: Me rindo
         retrieve_function_mock = MagicMock()
         mock = MagicMock()
+        defaults_mock = MagicMock()
+        defaults_mock.twicles_per_page = 100
         request_mock = MagicMock()
         user_settings_mock = MagicMock()
+
+        user_mock = MagicMock()
+        user_mock.username = 'utest'
+
+        get_user_mock = MagicMock(return_value=user_mock)
 
         with patch('users.views.retrieve_user_twicles',
                    new=retrieve_function_mock),\
              patch('users.views.UserSettings',
                    new=user_settings_mock), \
              patch('users.views.render', new=mock),\
-             patch('users.views.defaults', new=mock),\
-             patch('users.views.get_object_or_404', new=mock):
+             patch('users.views.defaults', new=defaults_mock),\
+             patch('users.views.get_object_or_404', new=get_user_mock):
 
-            request_mock.is_authenticated.return_value = False
+            request_mock.user.is_authenticated.return_value = False
+
             users.views.show_profile(request_mock, 'utest')
             # Unauthenticated... The amount is the mock that mocks the defaults
-            retrieve_function_mock.assert_called_once_with('utest', mock)
+            retrieve_function_mock.assert_called_once_with(user_mock.username,
+                                                           100,
+                                                           requester=None)
 
             user_settings_mock.objects.get().twicles_per_page = 100
-            request_mock.is_authenticated.return_value = True
+            request_mock.user.is_authenticated.return_value = True
             users.views.show_profile(request_mock, 'utest')
             # Authenticated... The amount is the value from the user settings
-            retrieve_function_mock.assert_called_once_with('utest', 100)
+            retrieve_function_mock.assert_called_with('utest',
+                                                       100,
+                                                       requester=request_mock.user)
