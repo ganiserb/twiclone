@@ -43,22 +43,46 @@ class ShowProfileViewTests(TestCase):
         self.assertIsInstance(rsp.context['following_count'], int)
         self.assertIsInstance(rsp.context['new_twicle_form'], NewTwicleForm)
 
-    # def test_anonymous_user_does_not_see_unfollow_link(self):
-    #     u = utils.create_user('test')   # Create the user to request her profile
-    #
-    #     # Request her profile with an authenticated user
-    #     request_user, rsp = utils.get_response_with_authenticated_user(
-    #         self.client,
-    #         reverse('users:show_profile', kwargs={'username': u.username})
-    #     )
-    #
-    #     # Check that she sees the follow link
-    #     self.assertInHTML('<a href="' +
-    #                       reverse('users:follow',
-    #                               kwargs={'username': u.username,
-    #                                       'action': 'f'})
-    #                       + '">Seguir</a>',
-    #                       rsp.content)
+    def test_anonymous_user_does_not_see_follow_control_link(self):
+        u = utils.create_user('test')   # Create the user to request her profile
+
+        rsp = self.client.get(reverse('users:show_profile',
+                                      kwargs={'username': u.username}))
+
+        # Check that she does not see the follow link
+        self.assertNotIn('<a id="follow_control_button" href="#">',
+                         rsp.content.decode('utf-8'))
+
+    def test_authenticated_user_sees_follow_link(self):
+        u = utils.create_user('test')
+        user, rsp = utils.get_response_with_authenticated_user(
+            self.client,
+            reverse('users:show_profile', kwargs={'username': u.username}),
+        )
+        self.assertIn('follow_control_action="f";',
+                      rsp.content.decode('utf-8'))
+
+    def test_authenticated_user_sees_unfollow_link(self):
+        u = utils.create_user('test')
+        o = utils.create_user('pepe')
+        o.following.add(u)
+        user, rsp = utils.get_response_with_authenticated_user(
+            self.client,
+            reverse('users:show_profile', kwargs={'username': u.username}),
+            user=o
+        )
+        self.assertIn('follow_control_action="u";',
+                      rsp.content.decode('utf-8'))
+
+    def test_authenticated_user_does_not_see_follow_control_on_her_own_profile(self):
+        u = utils.create_user('test')
+        user, rsp = utils.get_response_with_authenticated_user(
+            self.client,
+            reverse('users:show_profile', kwargs={'username': u.username}),
+            user=u
+        )
+        self.assertNotIn('<a id="follow_control_button" href="#">',
+                         rsp.content.decode('utf-8'))
 
     def test_nonexisting_username_returns_404(self):
         rsp = self.client.get(reverse('users:show_profile',
@@ -80,6 +104,7 @@ class ShowProfileViewTests(TestCase):
                       rsp.context['new_twicle_form'].initial['text'])
 
     def test_view_calls_retrieve_function_properly(self):
+        # QUESTION: Me rindo
         retrieve_function_mock = MagicMock()
         mock = MagicMock()
         request_mock = MagicMock()
@@ -90,7 +115,8 @@ class ShowProfileViewTests(TestCase):
              patch('users.views.UserSettings',
                    new=user_settings_mock), \
              patch('users.views.render', new=mock),\
-             patch('users.views.defaults', new=mock):
+             patch('users.views.defaults', new=mock),\
+             patch('users.views.get_object_or_404', new=mock):
 
             request_mock.is_authenticated.return_value = False
             users.views.show_profile(request_mock, 'utest')

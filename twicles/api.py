@@ -3,6 +3,7 @@ __author__ = 'gabriel'
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from twicles import defaults
+from twicles.models import UserSettings
 
 # Django datetime enconder
 from django.core.serializers.json import DjangoJSONEncoder
@@ -37,6 +38,8 @@ def retrieve_subscribed_twicles(username, amount=defaults.twicles_per_page):
     the people <username> is following
     :param username:    twicles retrieved will belong to the people
                         that this <username> is following
+                        (And depending on their settings, if they may also
+                        have to be following <username>)
     :param amount:      the total amount of twicles that will be retrieved,
                         truncated depending on publication date
     :return:            a queryset of twicles ordered by publication date.
@@ -49,7 +52,23 @@ def retrieve_subscribed_twicles(username, amount=defaults.twicles_per_page):
         raise ValueError('%s is a negative amount'
                          'of twicles to retrieve' % amount)
     user = get_object_or_404(User, username=username)
-    following_users = user.following.all()
+
+    # QUESTION: Cómo mejorar estas querys?
+    following_with_public_twicles = user.following.filter(
+        id__in=UserSettings.objects.filter(
+            visibility__exact=UserSettings.PUBLIC
+        )
+    )
+    following_with_private_twicles_following_me = user.following.filter(
+        id__in=UserSettings.objects.filter(
+            visibility__exact=UserSettings.FOLLOWING
+        )
+    ).filter(
+        id__in=user.followed_by.all()
+    )
+    # QUESTION
+    # Joineo así?
+    following_users = list(following_with_private_twicles_following_me) + list(following_with_public_twicles)
 
     # TODO: Agregar opciones de privacidad, que sólo obtenga los de aquellos que puede
     twicles = Twicle.objects.filter(author__in=following_users) \
@@ -59,13 +78,16 @@ def retrieve_subscribed_twicles(username, amount=defaults.twicles_per_page):
     return twicles
 
 
-def retrieve_user_twicles(username, amount=defaults.twicles_per_page):
+def retrieve_user_twicles(username,
+                          amount=defaults.twicles_per_page,
+                          requester=None):
     """
     Retrieves the last <amount> of twicles published by
     the user <username>
     :param username:    twicles retrieved will belong to <username>
     :param amount:      the total amount of twicles that will be retrieved,
                         truncated depending on publication date
+    :param requester    user who is requesting the data. None if is anonymous
     :return:            a queryset of twicles that do NOT belong to <username>,
                         ordered by publication date. Newer first
     """
@@ -76,6 +98,21 @@ def retrieve_user_twicles(username, amount=defaults.twicles_per_page):
         raise ValueError('%s is a negative amount'
                          'of twicles to retrieve' % amount)
     user = get_object_or_404(User, username=username)
-    twicles = Twicle.objects.filter(author__exact=user) \
-                            .order_by('-created')[:amount]
+
+    # QUESTION: Esto es un quilombo, pero es la mejor manera que encontré
+    #   para hacerlo sin confundirme
+    if user.usersettings.visibility == UserSettings.FOLLOWING:
+        if not requester:
+            twicles = Twicle.objects.none()
+        else:
+            if user.following.filter(id__in=requester.followed_by.all()).exists():
+                twicles = Twicle.objects.filter(author__exact=user) \
+                                        .order_by('-created')[:amount]
+            else:
+                twicles = Twicle.objects.none()
+    else:
+        twicles = Twicle.objects.filter(author__exact=user) \
+                                .order_by('-created')[:amount]
+
+
     return twicles

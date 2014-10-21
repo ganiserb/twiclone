@@ -5,8 +5,7 @@ from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse
 
 from twicles.api import retrieve_subscribed_twicles, retrieve_user_twicles
-from twicles import defaults, forms
-import twicles
+from twicles import defaults, forms, models, views
 from tests import utils
 import users
 from django.contrib.auth import get_user_model
@@ -151,6 +150,44 @@ class ApiRetrieveProfileTwiclesTests(TestCase, CommonRetrieveTests):
                                  ordered=False,
                                  transform=lambda obj: obj.id)
 
+    def test_private_twicles_not_returned_without_requester(self):
+        u1 = utils.create_user('user1')
+        utils.create_twicles(u1, 5)
+        u1.usersettings.visibility = models.UserSettings.FOLLOWING
+        u1.usersettings.save()
+
+        self.assertQuerysetEqual(self.function(u1.username),
+                                 models.Twicle.objects.none())
+
+    def test_private_twicles_not_returned_without_requester_being_followed(self):
+        u1 = utils.create_user('user1')
+        utils.create_twicles(u1, 5)
+        u1.usersettings.visibility = models.UserSettings.FOLLOWING
+        u1.usersettings.save()
+
+        u2 = utils.create_user('requester')
+        # u2 shouldn't see u1 twicles because u1 is not following her
+
+        self.assertQuerysetEqual(self.function(u1.username, requester=u2),
+                                 models.Twicle.objects.none())
+
+    def test_private_twicles_returned_if_requester_is_being_followed(self):
+        u1 = utils.create_user('user1')
+        twicles_u1 = utils.create_twicles(u1, 5)
+        u1.usersettings.visibility = models.UserSettings.FOLLOWING
+        u1.usersettings.save()
+
+        u2 = utils.create_user('requester')
+        u1.following.add(u2)
+        # u2 should see u1 twicles because u1 is following her
+
+        self.assertQuerysetEqual(self.function(u1.username, requester=u2),
+                                 [twicle.id
+                                  for twicle
+                                  in twicles_u1],
+                                 ordered=False,
+                                 transform=lambda obj: obj.id)
+
 
 class HomeViewTests(TestCase):
 
@@ -201,7 +238,7 @@ class HomeViewTests(TestCase):
              patch('twicles.views.render', new=mock):
 
             # Call the view directly to test later
-            twicles.views.home(mock)
+            views.home(mock)
 
         self.assertTrue(retrieve_function_mock.called)
         self.assertEquals(retrieve_function_mock.call_count, 1)
@@ -228,7 +265,7 @@ class HomeViewTests(TestCase):
             user_settings_mock.objects.get().twicles_per_page = '100'
 
             # Call the view directly to test later
-            twicles.views.home(request_mock)
+            views.home(request_mock)
 
         retrieve_function_mock.assert_called_once_with(request_mock.user, 100)
         # QUESTION! Por qué no funciona! Si el id del mock es el mismo!
