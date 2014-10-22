@@ -1,5 +1,4 @@
 # coding=utf-8
-from django.shortcuts import HttpResponse
 from django.http import HttpResponseForbidden, JsonResponse, Http404
 
 from twicles import api
@@ -43,13 +42,16 @@ def profile(request, username):
     :param username:    The <username> of the user whose Twicles are requested
     :return:
     """
-    param = (username,)
+    kwargs = {'username': username,
+              'requester': request.user}
     if 'amount' in request.GET:
-        amount = int(request.GET['amount'])  # Puede reventar
-        param += (amount,)
+        try:    # QUESTION: Está bien hacer esto? Si no puede convertit a int porque me ponen un string, dejo que reviente?
+            kwargs['amount'] = int(request.GET['amount'])
+        except ValueError:
+            raise Http404
 
     twicles = api.jsonify_twicle_queryset(
-        api.retrieve_user_twicles(*param)
+        api.retrieve_user_twicles(**kwargs)
     )
 
     return JsonResponse(twicles, safe=False)

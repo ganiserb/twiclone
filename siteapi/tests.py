@@ -2,7 +2,7 @@
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.shortcuts import HttpResponse
-from mock import patch, MagicMock
+from mock import patch, MagicMock, call
 import json
 from siteapi import views
 
@@ -75,8 +75,8 @@ class CommonJsonViewTests(object):
 
 class HomeJsonViewTests(TestCase, CommonJsonViewTests):
 
-    def view(self):
-        self.view = views.home
+    # def view(self):
+    #     self.view = views.home
 
     def setUp(self):
         self.retrieve_function = 'siteapi.views.api.retrieve_subscribed_twicles'
@@ -87,14 +87,38 @@ class HomeJsonViewTests(TestCase, CommonJsonViewTests):
         rsp = self.client.get(self.url)
         self.assertEquals(rsp.status_code, 403)
 
-    # TODO: Ver que además se llamen bien las funciones de la api con los parámetros que le van
+    def test_view_calls_api_function_correctly(self):
+        # QUESTION: Se repite prácticamente todo para la otra view... :/
+        request = MagicMock()
+        request.user.is_authenticated.return_value = True
+        request.user.username = 'test'
+        request.GET = {}
+
+        function_mock = MagicMock()
+
+        with patch('siteapi.views.api.retrieve_subscribed_twicles',
+                   new=function_mock),\
+             patch('siteapi.views.api.jsonify_twicle_queryset',
+                   new=MagicMock()),\
+             patch('siteapi.views.JsonResponse',
+                   new=MagicMock()):
+
+            self.view(request)
+
+            request.GET['amount'] = '111'
+            self.view(request)
+
+            function_mock.assert_has_calls(
+                [call(username=request.user.username),
+                 call(username=request.user.username, amount=111)]
+            )
 
 
 class ProfileJsonView(TestCase, CommonJsonViewTests):
 
     def setUp(self):
         self.retrieve_function = 'siteapi.views.api.retrieve_user_twicles'
-        self.view = views.home
+        self.view = views.profile
 
         u = utils.create_user('pepe')   # User whose profile will be requested
         self.url = reverse('api:profile', kwargs={'username': u.username})
@@ -108,4 +132,28 @@ class ProfileJsonView(TestCase, CommonJsonViewTests):
                                       kwargs={'username': 'idonotexist'}))
         self.assertEquals(rsp.status_code, 404)
 
-    # TODO: Ver que además se llamen bien las funciones de la api con los parámetros que le van
+    def test_view_calls_api_function_correctly(self):
+        # QUESTION: Se repite prácticamente todo para la otra view... :/
+        request = MagicMock()
+        request.user.is_authenticated.return_value = True
+        request.user.username = 'test'
+        request.GET = {}
+
+        function_mock = MagicMock()
+
+        with patch('siteapi.views.api.retrieve_user_twicles',
+                   new=function_mock),\
+             patch('siteapi.views.api.jsonify_twicle_queryset',
+                   new=MagicMock()),\
+             patch('siteapi.views.JsonResponse',
+                   new=MagicMock()):
+
+            self.view(request, 'pepe')
+
+            request.GET['amount'] = '111'
+            self.view(request, 'pepe')
+
+            function_mock.assert_has_calls(
+                [call(username='pepe', requester=request.user),
+                 call(username='pepe', amount=111, requester=request.user)]
+            )
