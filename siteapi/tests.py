@@ -10,18 +10,33 @@ from tests import utils
 
 
 class CommonJsonViewTests(object):
-    view = None
+    """
+    Tests that should pass all JSON views
+    For each view TestCase the following
+    attributes must be defined on SetUp:
+
+    view        the view function itself
+    url         the url the client uses to access the view
+                (do a reverse)
+    retrieve_function   a string containing the path to the
+                        retrieve function, to be able to patch it
+    """
     url = None
     retrieve_function = None    # Function to mock for the views
     # Common for all JSON views
     jsonify_function = 'siteapi.views.api.jsonify_twicle_queryset'
 
     def test_authenticated_user_gets_http_200(self):
+        """Tests if an authenticated user can access the JSON api views"""
         user, rsp = utils.get_response_with_authenticated_user(self.client,
                                                                self.url)
         self.assertEquals(rsp.status_code, 200)
 
     def test_valid_json_resposne(self):
+        """
+        All JSON views should return valid JSON text and
+        include the JSON Content-Type header
+        """
         user = utils.create_user('test')
         utils.create_twicles(user, 10)
         _, rsp = utils.get_response_with_authenticated_user(self.client,
@@ -36,14 +51,19 @@ class CommonJsonViewTests(object):
         self.assertEquals(rsp['Content-Type'], 'application/json')
 
     def test_retrieve_function_receives_amount_parameter_from_http_get(self):
+        """
+        JSON views that return a list of things must capture
+        the <amount> parameter of the GET method and use it to
+        return that amount of things
+        """
         # Patch retrieve function with mock
         with patch(self.retrieve_function, new=MagicMock()) as rf:
-            rsp = self.client.get(self.url + '?amount=10')
+            self.client.get(self.url + '?amount=10')
             rf.assertCalledOnceWith(username='pepe', amount=10)
 
     def test_view_obtains_twicles_from_retrieve_function(self):
         """
-        Checks that the api functions are really called
+        Checks that the api functions are actually called
         to get the twicles
         """
         retrieve_function_mock = MagicMock()
@@ -55,13 +75,14 @@ class CommonJsonViewTests(object):
 
         json_response_mock.return_value = HttpResponse()
 
-        with patch(self.retrieve_function, new=retrieve_function_mock), \
-             patch(self.jsonify_function, new=jsonify_function_mock), \
-             patch('siteapi.views.JsonResponse', new=json_response_mock):
+        with patch(self.retrieve_function, new=retrieve_function_mock),\
+            patch(self.jsonify_function, new=jsonify_function_mock),\
+            patch('siteapi.views.JsonResponse', new=json_response_mock):
+
             # With these two functions patched, we can now call the view
             #   (but authenticated, so it works for both views)
 
-            user, rsp = utils.get_response_with_authenticated_user(
+            utils.get_response_with_authenticated_user(
                 self.client,
                 self.url
             )
@@ -74,9 +95,6 @@ class CommonJsonViewTests(object):
 
 
 class HomeJsonViewTests(TestCase, CommonJsonViewTests):
-
-    # def view(self):
-    #     self.view = views.home
 
     def setUp(self):
         self.retrieve_function = 'siteapi.views.api.retrieve_subscribed_twicles'
@@ -98,10 +116,10 @@ class HomeJsonViewTests(TestCase, CommonJsonViewTests):
 
         with patch('siteapi.views.api.retrieve_subscribed_twicles',
                    new=function_mock),\
-             patch('siteapi.views.api.jsonify_twicle_queryset',
-                   new=MagicMock()),\
-             patch('siteapi.views.JsonResponse',
-                   new=MagicMock()):
+            patch('siteapi.views.api.jsonify_twicle_queryset',
+                  new=MagicMock()),\
+            patch('siteapi.views.JsonResponse',
+                  new=MagicMock()):
 
             self.view(request)
 
@@ -143,10 +161,10 @@ class ProfileJsonView(TestCase, CommonJsonViewTests):
 
         with patch('siteapi.views.api.retrieve_user_twicles',
                    new=function_mock),\
-             patch('siteapi.views.api.jsonify_twicle_queryset',
-                   new=MagicMock()),\
-             patch('siteapi.views.JsonResponse',
-                   new=MagicMock()):
+            patch('siteapi.views.api.jsonify_twicle_queryset',
+                  new=MagicMock()),\
+            patch('siteapi.views.JsonResponse',
+                  new=MagicMock()):
 
             self.view(request, 'pepe')
 
