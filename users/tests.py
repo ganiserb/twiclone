@@ -139,3 +139,46 @@ class ShowProfileViewTests(TestCase):
             retrieve_function_mock.assert_called_with('utest',
                                                        100,
                                                        requester=request_mock.user)
+
+
+class PostFormViewCommon(object):
+    # Que si es POST:
+    #   Y no es válido:
+    #       Guarde en la session el POST entero para que la view lo tome de ahí para mostrar los errores
+    #   Si es válido:
+    #       Que redirija al next del form
+    #
+
+    view = None
+    form_path = None
+
+    def test_view_redirects_to_next_field_on_valid_form(self):
+        request = MagicMock()
+        request.method = 'POST'
+        request.user.is_authenticated.return_value = True   # Bypass @login_req
+
+        form = MagicMock()
+        form.return_value = form    # DO NOT return a new mock instance!
+        form.is_valid.return_value = True
+        form.cleaned_data['next'] = 'url'
+
+        # The user whose profile will be edited
+        #   (retrieved with get_object_or_404)
+        get_user_from_form = MagicMock()
+        get_user_from_form.return_value = request.user
+
+        redirect = MagicMock()
+
+        with patch(self.form_path, new=form),\
+             patch('users.views.get_object_or_404', new=get_user_from_form),\
+             patch('users.views.HttpResponseRedirect', new=redirect):
+            self.view(request)
+
+        redirect.assert_called_once_with(form.cleaned_data['next'])
+
+
+class PostProfileFormViewTests(TestCase, PostFormViewCommon):
+
+    def setUp(self):
+        self.view = users.views.post_profile_form
+        self.form_path = 'users.views.ProfileForm'
