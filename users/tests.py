@@ -142,15 +142,20 @@ class ShowProfileViewTests(TestCase):
 
 
 class PostFormViewCommon(object):
-    # Que si es POST:
-    #   Y no es válido:
-    #       Guarde en la session el POST entero para que la view lo tome de ahí para mostrar los errores
-    #   Si es válido:
-    #       Que redirija al next del form
-    #
 
     view = None
     form_path = None
+
+    def test_view_redirects_somewhere_if_method_is_not_post(self):
+        redirect = MagicMock()
+        request = MagicMock()
+
+        with patch(self.form_path, new=MagicMock),\
+             patch('users.views.get_object_or_404', new=MagicMock),\
+             patch('users.views.HttpResponseRedirect', new=redirect):
+             self.view(request)
+
+        self.assertEquals(redirect.call_count, 1)
 
     def test_view_redirects_to_next_field_on_valid_form(self):
         request = MagicMock()
@@ -175,6 +180,32 @@ class PostFormViewCommon(object):
             self.view(request)
 
         redirect.assert_called_once_with(form.cleaned_data['next'])
+
+    def test_view_saves_request_info_in_session_on_invalid_form(self):
+        request = MagicMock()
+        request.method = 'POST'
+        request.POST.copy.return_value = 'data'
+        request.user.is_authenticated.return_value = True   # Bypass @login_req
+        request.session = {}
+
+        form = MagicMock()
+        form.return_value = form    # DO NOT return a new mock instance!
+        form.is_valid.return_value = False
+
+        # The user whose profile will be edited
+        #   (retrieved with get_object_or_404)
+        get_user_from_form = MagicMock()
+        get_user_from_form.return_value = request.user
+
+        redirect = MagicMock()
+
+        with patch(self.form_path, new=form),\
+             patch('users.views.get_object_or_404', new=get_user_from_form),\
+             patch('users.views.HttpResponseRedirect', new=redirect):
+            self.view(request)
+
+        self.assertIn('data',
+                      request.session.values())
 
 
 class PostProfileFormViewTests(TestCase, PostFormViewCommon):
