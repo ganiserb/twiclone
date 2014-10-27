@@ -140,7 +140,8 @@ def post_edit_tags_form(request):
 @login_required()
 def follow_control(request):
     """
-    Adds or removes the requested user to the <following> list of the currently logged in user
+    Adds or removes the requested user to the
+    <following> list of the currently logged in user
     """
     if request.method == "POST":
         username = request.POST['username']
