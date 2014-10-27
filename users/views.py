@@ -83,7 +83,7 @@ def post_profile_form(request):
             user = get_object_or_404(User, id=profile_form.cleaned_data['user_id'])
 
             if request.user == user:
-                # Recreate the form, but this time binded to the user instance
+                # Recreate the form, but this time bound to the user instance
                 profile_form = ProfileForm(request.POST, request.FILES, instance=user)
                 profile_form.save()
 
