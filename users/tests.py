@@ -157,6 +157,7 @@ class PostFormViewCommon(object):
 
         self.assertEquals(redirect.call_count, 1)
 
+    # QUESTION: Cómo no repetir el código de los sig tests?
     def test_view_redirects_to_next_field_on_valid_form(self):
         request = MagicMock()
         request.method = 'POST'
@@ -170,6 +171,7 @@ class PostFormViewCommon(object):
         # The user whose profile will be edited
         #   (retrieved with get_object_or_404)
         get_user_from_form = MagicMock()
+        # In case the view retrieves a user
         get_user_from_form.return_value = request.user
 
         redirect = MagicMock()
@@ -180,6 +182,25 @@ class PostFormViewCommon(object):
             self.view(request)
 
         redirect.assert_called_once_with(form.cleaned_data['next'])
+
+    def test_view_saves_posted_data_on_valid_form(self):
+        request = MagicMock()
+        request.method = 'POST'
+        request.user.is_authenticated.return_value = True   # Bypass @login_req
+
+        form = MagicMock()
+        form.return_value = form    # DO NOT return a new mock instance!
+        form.is_valid.return_value = True
+
+        get_user_from_form = MagicMock()
+        get_user_from_form.return_value = request.user
+
+        with patch(self.form_path, new=form),\
+             patch('users.views.get_object_or_404', new=get_user_from_form),\
+             patch('users.views.HttpResponseRedirect', new=MagicMock()):
+            self.view(request)
+
+        self.assertEquals(form.save.call_count, 1)
 
     def test_view_saves_request_info_in_session_on_invalid_form(self):
         request = MagicMock()
@@ -213,3 +234,17 @@ class PostProfileFormViewTests(TestCase, PostFormViewCommon):
     def setUp(self):
         self.view = users.views.post_profile_form
         self.form_path = 'users.views.ProfileForm'
+
+
+class PostNewTagFormTests(TestCase, PostFormViewCommon):
+
+    def setUp(self):
+        self.view = users.views.post_new_tag_form
+        self.form_path = 'users.views.TagForm'
+
+
+class PostEditTagsForm(TestCase, PostFormViewCommon):
+
+    def setUp(self):
+        self.view = users.views.post_edit_tags_form
+        self.form_path = 'users.views.ProfileTagsForm'

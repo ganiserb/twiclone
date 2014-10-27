@@ -77,14 +77,18 @@ def show_profile(request, username):
 @login_required()
 def post_profile_form(request):
     if request.method == 'POST':
-        profile_form = ProfileForm(request.POST, request.FILES)
+        profile_form = ProfileForm(request.POST,
+                                   request.FILES)
         if profile_form.is_valid():
             # Extract the user from the hidden field
-            user = get_object_or_404(User, id=profile_form.cleaned_data['user_id'])
+            user = get_object_or_404(User,
+                                     id=profile_form.cleaned_data['user_id'])
 
             if request.user == user:
                 # Recreate the form, but this time bound to the user instance
-                profile_form = ProfileForm(request.POST, request.FILES, instance=user)
+                profile_form = ProfileForm(request.POST,
+                                           request.FILES,
+                                           instance=user)
                 profile_form.save()
 
                 return HttpResponseRedirect(profile_form.cleaned_data['next'])
@@ -108,7 +112,7 @@ def post_new_tag_form(request):
 
             return HttpResponseRedirect(new_tag_form.cleaned_data['next'])
         else:
-            request.session['new_tag_form_with_errors'] = request.POST
+            request.session['new_tag_form_with_errors'] = request.POST.copy()
 
     return HttpResponseRedirect(reverse('home'))
 
