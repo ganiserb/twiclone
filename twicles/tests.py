@@ -232,6 +232,7 @@ class HomeViewTests(TestCase):
                               users.forms.TagForm)
 
     # QUESTION: Cómo no repetir el código de patcheo de los siguientes 2 tests que sólo difieren en el setup de los mocks?
+    #       ----> Usando un callable para que sea ejecutado dentro del with
     def test_view_gets_twicles_from_retrieve_function(self):
         """
         Checks that the api function is really used for retrieving

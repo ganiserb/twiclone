@@ -49,7 +49,7 @@ def retrieve_subscribed_twicles(username, amount=defaults.twicles_per_page):
                          'of twicles to retrieve' % amount)
     user = get_object_or_404(User, username=username)
 
-    # QUESTION: Cómo mejorar estas querys?
+    # QUESTION: Cómo mejorar estas querys? -> Con "Q"s
     following_with_public_twicles = user.following.filter(
         id__in=UserSettings.objects.filter(
             visibility__exact=UserSettings.PUBLIC
@@ -96,7 +96,7 @@ def retrieve_user_twicles(username,
     user = get_object_or_404(User, username=username)
 
     # QUESTION: Esto es un quilombo de ifs, pero es la mejor manera que encontré
-    #   para hacerlo sin confundirme... mejoras? Cómo pensarlo sin perderse?
+    #   para hacerlo sin confundirme... mejoras? -> Usar flags
     if user.usersettings.visibility == UserSettings.FOLLOWING:
         if not requester:
             twicles = Twicle.objects.none()
