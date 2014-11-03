@@ -145,14 +145,16 @@ class PostFormViewCommon(object):
 
     view = None
     form_path = None
+    response_redirect_path = None
+    get_object_or_404_path = None
 
     def test_view_redirects_somewhere_if_method_is_not_post(self):
         redirect = MagicMock()
         request = MagicMock()
 
         with patch(self.form_path, new=MagicMock),\
-             patch('users.views.get_object_or_404', new=MagicMock),\
-             patch('users.views.HttpResponseRedirect', new=redirect):
+             patch(self.get_object_or_404_path, new=MagicMock),\
+             patch(self.response_redirect_path, new=redirect):
              self.view(request)
 
         self.assertEquals(redirect.call_count, 1)
@@ -177,8 +179,8 @@ class PostFormViewCommon(object):
         redirect = MagicMock()
 
         with patch(self.form_path, new=form),\
-             patch('users.views.get_object_or_404', new=get_user_from_form),\
-             patch('users.views.HttpResponseRedirect', new=redirect):
+             patch(self.get_object_or_404_path, new=get_user_from_form),\
+             patch(self.response_redirect_path, new=redirect):
             self.view(request)
 
         redirect.assert_called_once_with(form.cleaned_data['next'])
@@ -196,8 +198,8 @@ class PostFormViewCommon(object):
         get_user_from_form.return_value = request.user
 
         with patch(self.form_path, new=form),\
-             patch('users.views.get_object_or_404', new=get_user_from_form),\
-             patch('users.views.HttpResponseRedirect', new=MagicMock()):
+             patch(self.get_object_or_404_path, new=get_user_from_form),\
+             patch(self.response_redirect_path, new=MagicMock()):
             self.view(request)
 
         self.assertEquals(form.save.call_count, 1)
@@ -221,8 +223,8 @@ class PostFormViewCommon(object):
         redirect = MagicMock()
 
         with patch(self.form_path, new=form),\
-             patch('users.views.get_object_or_404', new=get_user_from_form),\
-             patch('users.views.HttpResponseRedirect', new=redirect):
+             patch(self.get_object_or_404_path, new=get_user_from_form),\
+             patch(self.response_redirect_path, new=redirect):
             self.view(request)
 
         self.assertIn('data',
@@ -232,6 +234,8 @@ class PostFormViewCommon(object):
 class PostProfileFormViewTests(TestCase, PostFormViewCommon):
 
     def setUp(self):
+        self.get_object_or_404_path = 'users.views.get_object_or_404'
+        self.response_redirect_path = 'users.views.HttpResponseRedirect'
         self.view = users.views.post_profile_form
         self.form_path = 'users.views.ProfileForm'
 
@@ -239,6 +243,8 @@ class PostProfileFormViewTests(TestCase, PostFormViewCommon):
 class PostNewTagFormTests(TestCase, PostFormViewCommon):
 
     def setUp(self):
+        self.get_object_or_404_path = 'users.views.get_object_or_404'
+        self.response_redirect_path = 'users.views.HttpResponseRedirect'
         self.view = users.views.post_new_tag_form
         self.form_path = 'users.views.TagForm'
 
@@ -246,5 +252,7 @@ class PostNewTagFormTests(TestCase, PostFormViewCommon):
 class PostEditTagsForm(TestCase, PostFormViewCommon):
 
     def setUp(self):
+        self.get_object_or_404_path = 'users.views.get_object_or_404'
+        self.response_redirect_path = 'users.views.HttpResponseRedirect'
         self.view = users.views.post_edit_tags_form
         self.form_path = 'users.views.ProfileTagsForm'

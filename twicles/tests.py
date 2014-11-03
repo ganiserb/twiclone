@@ -7,6 +7,7 @@ from django.http import Http404
 from twicles.api import retrieve_subscribed_twicles, retrieve_user_twicles
 from twicles import defaults, forms, models, views
 from tests import utils
+from users.tests import PostFormViewCommon
 import users
 from django.contrib.auth import get_user_model
 User = get_user_model()
@@ -286,3 +287,12 @@ class HomeViewTests(TestCase):
             views.home(request_mock)
 
         retrieve_function_mock.assert_called_once_with(user_mock, 100)
+
+
+class PostTwicleFormViewTests(TestCase, PostFormViewCommon):
+
+    def setUp(self):
+        self.view = views.post_twicle
+        self.form_path = 'twicles.views.NewTwicleForm'
+        self.response_redirect_path = 'twicles.views.HttpResponseRedirect'
+        self.get_object_or_404_path = 'twicles.views.get_object_or_404'

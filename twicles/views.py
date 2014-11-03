@@ -26,7 +26,7 @@ def post_twicle(request):
             twicle.save()
             return HttpResponseRedirect(new_twicle_form.cleaned_data['next'])
         else:
-            request.session['new_twicle_form_with_errors'] = request.POST
+            request.session['new_twicle_form_with_errors'] = request.POST.copy()
 
     return HttpResponseRedirect(reverse('home'))
 
